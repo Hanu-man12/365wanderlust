@@ -1,0 +1,155 @@
+/* ============================================================
+   365 WANDERLUST — Global Styles
+   Tailwind CSS v4 + Brand Design Tokens
+   ============================================================ */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Dancing+Script:wght@600;700&display=swap');
+
+@import "tailwindcss";
+
+/* ── Brand Color Tokens ── */
+@theme {
+  /* Brand Colors — extracted from actual logo & posters */
+  --color-brand-red:    #C8102E; /* Crimson — logo emblem, compass icon        */
+  --color-brand-maroon: #8B1A2E; /* Deep burgundy — poster "RAJASTHAN" heading  */
+  --color-cream:        #F5EDD8; /* Warm parchment — poster backgrounds         */
+  --color-cream-dark:   #EDE0C4; /* Slightly deeper cream — card borders        */
+  --color-sand:         #D4956A; /* Terracotta-orange — desert dune tones       */
+  --color-gold:         #C8861A; /* Sunset gold — golden hour photography       */
+  --color-gold-light:   #F0C060; /* Light gold — highlights                     */
+  --color-ink:          #1C0F0A; /* Deep warm black — dark section backgrounds  */
+  --color-ink-light:    #2E1A10; /* Slightly lighter ink — dark card bg         */
+  --color-brown:        #3D2B1F; /* Warm dark brown — body text                 */
+  --color-brown-light:  #7A5C48; /* Mid brown — secondary text                  */
+
+  /* Typography */
+  --font-serif:   'Cormorant Garamond', Georgia, serif;
+  --font-sans:    'DM Sans', system-ui, sans-serif;
+  --font-script:  'Dancing Script', cursive;
+
+  /* Spacing / Sizing */
+  --spacing-section: 6rem; /* Consistent vertical padding between sections */
+}
+
+/* ── Base Styles ── */
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-sans);
+  color: var(--color-brown);
+  background-color: var(--color-cream);
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Scroll Margin for sticky navbar ── */
+section[id] {
+  scroll-margin-top: 72px;
+}
+
+/* ── Custom Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-cream); }
+::-webkit-scrollbar-thumb { background: var(--color-sand); border-radius: 3px; }
+
+/* ── Focus Visible — accessible outline ── */
+:focus-visible {
+  outline: 2px solid var(--color-brand-red);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── Skip to Content Link ── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background: var(--color-brand-red);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0 0 6px 6px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  z-index: 9999;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* ── Ornamental divider SVG line ── */
+.ornament-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-sand);
+}
+.ornament-divider::before,
+.ornament-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--color-sand), transparent);
+}
+
+/* ── Parchment texture background (CSS only, no image needed) ── */
+.bg-parchment {
+  background-color: var(--color-cream);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+/* ── Dark ink section ── */
+.bg-ink {
+  background-color: var(--color-ink);
+}
+
+/* ── Reveal animation (IntersectionObserver controlled) ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── Framed Image (polaroid / postcard style) ── */
+.framed-image {
+  background: white;
+  padding: 8px 8px 28px 8px;
+  box-shadow: 0 4px 20px rgba(28,15,10,0.18), 0 1px 4px rgba(28,15,10,0.10);
+  border: 1px solid var(--color-cream-dark);
+  display: inline-block;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+.framed-image:hover {
+  box-shadow: 0 8px 32px rgba(28,15,10,0.22), 0 2px 8px rgba(28,15,10,0.12);
+  transform: rotate(0deg) translateY(-4px) !important; /* straightens + lifts on hover */
+}
+
+/* ── Lightbox overlay ── */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 15, 10, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
