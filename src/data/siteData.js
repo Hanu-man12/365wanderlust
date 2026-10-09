@@ -10,8 +10,8 @@
 import logoMark from '../assets/brand/logo-mark.png';
 
 // HERO BANNER — #GrabYourLeisure collage (Eiffel, Colosseum, Big Ben etc.)
-// Place file at: src/assets/brand/hero-banner.jpg
-import heroBanner from '../assets/brand/hero-banner.jpg';
+// Place file at: src/assets/brand/hero-banner.jpeg
+import heroBanner from '../assets/brand/hero-banner.jpeg';
 
 // ── Trial image imports ──────────────────────────────────────
 // TRIAL IMAGES — replace with final photos (see README for how-to)
