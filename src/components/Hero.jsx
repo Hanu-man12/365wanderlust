@@ -15,10 +15,11 @@ export default function Hero() {
       aria-label="365 Wanderlust — Grab Your Leisure"
       style={{
         position: 'relative',
-        /* 88vh instead of 100vh — lets the About section peek through on first load
-           so visitors immediately see there is more content below.
-           TO REVERT: change 88vh back to 100vh here and in the media queries below. */
-        minHeight: '88vh',
+        /* PEEK-THROUGH FIX: use calc(100vh - 120px) so the About section
+           heading is always visible at first load without any scrolling.
+           120px = ~72px navbar + ~48px of About's heading peeking in.
+           TO REVERT: change back to minHeight: '100vh'                    */
+        minHeight: 'calc(100vh - 120px)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -157,21 +158,24 @@ export default function Hero() {
           0%, 100% { transform: translateY(0); }
           50%       { transform: translateY(5px); }
         }
-        /* ── Hero height responsive overrides ──
-           All values reduced from 100vh to peek-through values.
-           TO REVERT: change each value back to the commented original. */
+        /* ── Hero peek-through responsive overrides ──
+           Goal: ~80-120px of About section always visible at first load.
+           calc(100vh - Xpx) ensures the hero never fills the full viewport.
+           TO REVERT any of these: change back to 100vh.                    */
 
-        /* Mobile portrait — was 85vh */
+        /* Mobile 360-480px: reduce more aggressively */
         @media (max-width: 480px) {
-          #home { min-height: 78vh !important; }
+          #home { min-height: calc(100vh - 140px) !important; }
         }
-        /* Tablet — was implicitly 100vh */
+        /* Tablet 481-1024px */
         @media (min-width: 481px) and (max-width: 1024px) {
-          #home { min-height: 85vh !important; }
+          #home { min-height: calc(100vh - 130px) !important; }
         }
-        /* Very short screens (landscape mobile) */
-        @media (max-height: 600px) {
-          #home { min-height: 92svh !important; }
+        /* Half-screen desktop and up (> 1024px): default calc above applies */
+
+        /* Very short landscape screens — ensure CTA still visible */
+        @media (max-height: 500px) {
+          #home { min-height: 80vh !important; }
         }
         @media (prefers-reduced-motion: reduce) {
           #home a { animation: none !important; transition: none !important; }

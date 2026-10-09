@@ -31,15 +31,21 @@
     <meta name="application-name" content="365 Wanderlust" />
 
     <!-- ── Favicons ──
-         SVG favicon: derived from the compass-airplane brand mark.
-         PNG files (favicon-32x32.png, apple-touch-icon.png) should be
-         generated from src/assets/brand/logo-mark.png and placed in /public/.
-         Until then, the SVG favicon covers modern browsers.
+         Using logo-mark.png directly as the favicon source.
+         ⚠️  NOTE: logo-mark.png currently has a WHITE background baked into
+         the PNG file itself. To get a clean transparent favicon, please supply
+         a transparent-background version of the logo at:
+           public/logo-mark.png  (replacing the current white-bg version)
+         The SVG favicon below is a clean vector fallback (crimson compass).
+         For PNG favicons, place 32x32 and 180x180 exports of the logo at:
+           public/favicon-32x32.png
+           public/apple-touch-icon.png
+         ALL references (favicon, apple-touch-icon, navbar, footer) use the
+         SAME single file: public/logo-mark.png — replace once, updates everywhere.
     ──-->
-    <link rel="icon" type="image/svg+xml"  href="/favicon.svg" />
-    <link rel="icon" type="image/png" sizes="32x32"  href="/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16"  href="/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180"     href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png"     href="/logo-mark.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/logo-mark.png" />
 
     <!-- ── JSON-LD Structured Data (TravelAgency) ── -->
     <script type="application/ld+json">

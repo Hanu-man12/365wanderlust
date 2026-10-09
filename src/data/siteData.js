@@ -47,10 +47,13 @@ export const contact = {
   // [ADD ADDRESS] — owner to supply physical address
   address: '[ADD YOUR OFFICE / CITY ADDRESS HERE]',
 
-  // Social links — add real URLs when available
+  // Social links — fill in your real URLs below
+  // ⚠️  TO ADD YOUR LINKS: paste the real URL in the quotes below
   social: {
-    instagram: '', // e.g. 'https://instagram.com/365wanderlust'
-    facebook:  '', // e.g. 'https://facebook.com/365wanderlust'
+    // ← PASTE your Instagram URL here (e.g. 'https://instagram.com/365_wanderlust_')
+    instagram: 'https://instagram.com/365_wanderlust_?rpxt=MWpmaGhtaWc5a3A3dA%3D%3D',
+    // ← PASTE your Facebook URL here (e.g. 'https://facebook.com/share/199HC1pwQN/')
+    facebook:  'https://www.facebook.com/share/199HC1pwQN/',
     youtube:   '', // e.g. 'https://youtube.com/@365wanderlust'
   },
 };
