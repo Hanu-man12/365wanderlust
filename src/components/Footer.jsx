@@ -7,20 +7,17 @@ import { FaWhatsapp, FaInstagram, FaFacebook, FaYoutube } from 'react-icons/fa';
 import { brand, contact } from '../data/siteData';
 import { getWhatsAppLink, getMailtoLink, getTelLink } from '../utils/contactLinks';
 
-// Small inline logo SVG
+// Footer logo — uses real image from siteData.brand.logo
 function FooterLogo() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-      <svg width="34" height="34" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-        <circle cx="20" cy="20" r="18" stroke="#C8102E" strokeWidth="2" fill="none"/>
-        <line x1="20" y1="4"  x2="20" y2="7"  stroke="#C8102E" strokeWidth="1.5"/>
-        <line x1="20" y1="33" x2="20" y2="36" stroke="#C8102E" strokeWidth="1.5"/>
-        <line x1="4"  y1="20" x2="7"  y2="20" stroke="#C8102E" strokeWidth="1.5"/>
-        <line x1="33" y1="20" x2="36" y2="20" stroke="#C8102E" strokeWidth="1.5"/>
-        <path d="M20 10 L24 22 L20 20 L16 22 Z" fill="#C8102E"/>
-        <path d="M14 17 L20 20 L26 17" stroke="#C8102E" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
-        <circle cx="20" cy="20" r="1.5" fill="#C8102E"/>
-      </svg>
+      <img
+        src={brand.logo}
+        alt={brand.logoAlt}
+        width={34}
+        height={34}
+        style={{ width: 34, height: 34, objectFit: 'contain', display: 'block', flexShrink: 0 }}
+      />
       <div>
         <div style={{
           fontFamily: 'var(--font-serif)',

@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Menu, X, Send } from 'lucide-react';
 import { brand } from '../data/siteData';
 import { getWhatsAppLink } from '../utils/contactLinks';
+// Logo image imported via brand.logo (siteData) — not hard-coded here
 
 const NAV_LINKS = [
   { label: 'Home',         href: '#home'         },
@@ -16,30 +17,22 @@ const NAV_LINKS = [
   { label: 'Contact',      href: '#contact'      },
 ];
 
-// SVG Logo (inline — derived from brand identity: clock/compass + airplane)
-function LogoSVG({ size = 36 }) {
+// Logo — uses real logo-mark image from siteData.brand.logo
+function LogoMark({ size = 38 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" aria-hidden="true">
-      {/* Outer circle */}
-      <circle cx="20" cy="20" r="18" stroke="#C8102E" strokeWidth="2" fill="none"/>
-      {/* Clock ticks */}
-      <line x1="20" y1="4"  x2="20" y2="7"  stroke="#C8102E" strokeWidth="1.5"/>
-      <line x1="20" y1="33" x2="20" y2="36" stroke="#C8102E" strokeWidth="1.5"/>
-      <line x1="4"  y1="20" x2="7"  y2="20" stroke="#C8102E" strokeWidth="1.5"/>
-      <line x1="33" y1="20" x2="36" y2="20" stroke="#C8102E" strokeWidth="1.5"/>
-      {/* Airplane shape (simplified) */}
-      <path
-        d="M20 10 L24 22 L20 20 L16 22 Z"
-        fill="#C8102E"
-        stroke="none"
-      />
-      <path
-        d="M14 17 L20 20 L26 17"
-        stroke="#C8102E" strokeWidth="1.2" fill="none" strokeLinecap="round"
-      />
-      {/* Center dot */}
-      <circle cx="20" cy="20" r="1.5" fill="#C8102E"/>
-    </svg>
+    <img
+      src={brand.logo}
+      alt={brand.logoAlt}
+      width={size}
+      height={size}
+      style={{
+        width: size,
+        height: size,
+        objectFit: 'contain',
+        display: 'block',
+        flexShrink: 0,
+      }}
+    />
   );
 }
 
@@ -157,7 +150,7 @@ export default function Navbar() {
               flexShrink: 0,
             }}
           >
-            <LogoSVG size={38} />
+            <LogoMark size={38} />
             <div style={{ lineHeight: 1 }}>
               <span style={{
                 display: 'block',

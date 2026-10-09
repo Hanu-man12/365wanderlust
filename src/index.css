@@ -10,34 +10,48 @@
 
 /* ── Brand Color Tokens ── */
 @theme {
-  /* Brand Colors — extracted from actual logo & posters */
-  --color-brand-red:    #C8102E; /* Crimson — logo emblem, compass icon        */
-  --color-brand-maroon: #8B1A2E; /* Deep burgundy — poster "RAJASTHAN" heading  */
-  --color-cream:        #F5EDD8; /* Warm parchment — poster backgrounds         */
-  --color-cream-dark:   #EDE0C4; /* Slightly deeper cream — card borders        */
-  --color-sand:         #D4956A; /* Terracotta-orange — desert dune tones       */
-  --color-gold:         #C8861A; /* Sunset gold — golden hour photography       */
-  --color-gold-light:   #F0C060; /* Light gold — highlights                     */
-  --color-ink:          #1C0F0A; /* Deep warm black — dark section backgrounds  */
-  --color-ink-light:    #2E1A10; /* Slightly lighter ink — dark card bg         */
-  --color-brown:        #3D2B1F; /* Warm dark brown — body text                 */
-  --color-brown-light:  #7A5C48; /* Mid brown — secondary text                  */
+  /* ── PRIMARY PALETTE: Crimson · White · Black ── */
+  /* Sampled from the supplied logo and hero banner                          */
+  --color-brand-red:    #D0112B; /* Vivid crimson — logo, hero banner, CTAs  */
+  --color-brand-red-dk: #a50e22; /* Darker crimson — hover states            */
+  --color-brand-white:  #ffffff; /* Pure white — light backgrounds, text     */
+  --color-brand-black:  #0D0D0D; /* Near-black — dark sections, navbar, footer */
+  --color-brand-charcoal: #1a1a1a; /* Dark charcoal — cards on dark sections  */
+
+  /* ── SUPPORTING NEUTRALS (minimal, cream removed) ── */
+  --color-off-white:    #F8F6F3; /* Very light warm white — section backgrounds */
+  --color-light-grey:   #e8e4e0; /* Dividers, borders on white sections       */
+  --color-mid-grey:     #888480; /* Secondary / placeholder text              */
+  --color-dark-grey:    #2d2d2d; /* Body text on white backgrounds            */
+
+  /* ── LEGACY ALIASES (kept so existing components don't break) ── */
+  /* These now map to the new 3-color system                        */
+  --color-cream:        #F8F6F3; /* → off-white                               */
+  --color-cream-dark:   #e8e4e0; /* → light-grey                              */
+  --color-sand:         #D0112B; /* → brand-red (accent, was gold/sand)       */
+  --color-gold:         #D0112B; /* → brand-red                               */
+  --color-gold-light:   #ff4d6a; /* → lighter crimson for script accents      */
+  --color-ink:          #0D0D0D; /* → brand-black                             */
+  --color-ink-light:    #1a1a1a; /* → brand-charcoal                          */
+  --color-brown:        #2d2d2d; /* → dark-grey                               */
+  --color-brown-light:  #888480; /* → mid-grey                                */
+  --color-brand-maroon: #D0112B; /* → brand-red (maroon replaced by crimson)  */
 
   /* Typography */
   --font-serif:   'Cormorant Garamond', Georgia, serif;
   --font-sans:    'DM Sans', system-ui, sans-serif;
   --font-script:  'Dancing Script', cursive;
 
-  /* Spacing / Sizing */
-  --spacing-section: 6rem; /* Consistent vertical padding between sections */
+  /* Spacing */
+  --spacing-section: 6rem;
 }
 
 /* ── Base Styles ── */
 html {
   scroll-behavior: smooth;
   font-family: var(--font-sans);
-  color: var(--color-brown);
-  background-color: var(--color-cream);
+  color: var(--color-dark-grey);
+  background-color: var(--color-brand-white);
 }
 
 /* Respect prefers-reduced-motion */

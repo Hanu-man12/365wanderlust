@@ -4,6 +4,15 @@
 //  ⚠️  WhatsApp number: change ONCE here → updates everywhere.
 // ============================================================
 
+// ── Brand asset imports ──────────────────────────────────────
+// LOGO MARK — red compass/airplane badge (no text baked in)
+// Place file at: src/assets/brand/logo-mark.png
+import logoMark from '../assets/brand/logo-mark.png';
+
+// HERO BANNER — #GrabYourLeisure collage (Eiffel, Colosseum, Big Ben etc.)
+// Place file at: src/assets/brand/hero-banner.jpg
+import heroBanner from '../assets/brand/hero-banner.jpg';
+
 // ── Trial image imports ──────────────────────────────────────
 // TRIAL IMAGES — replace with final photos (see README for how-to)
 import posterRajasthan1 from '../assets/trial/rajasthan-journey.jpg';
@@ -17,19 +26,20 @@ export const brand = {
   tagline: 'Grab Your Leisure',
   domain:  '365wanderlust.com',
   url:     'https://365wanderlust.com',
+  // Logo mark image — red compass/airplane badge
+  logo:    logoMark,
+  logoAlt: '365 Wanderlust logo — red compass with airplane',
 };
 
 export const contact = {
   // ⚠️  WhatsApp: digits only, with country code. Change here → updates everywhere.
-  // REPLACE with your real WhatsApp number before launch!
-  whatsappNumber: '917425010750',   // ← CHANGE THIS (format: 91XXXXXXXXXX)
+  whatsappNumber: '917605809599',   // +91 76058 09599
 
   whatsappDefaultMessage:
-    'Hello! I am interested in your Rajasthan travel packages. I would like to know more.',
+    'Hello! I am interested in your travel packages. I would like to know more.',
 
   phones: [
-    { display: '+91 74250 10750', number: '+917425010750' },
-    { display: '+91 78903 87923', number: '+917890387923' },
+    { display: '+91 76058 09599', number: '+917605809599' },
   ],
 
   email: 'grabyourleisure365@gmail.com',
@@ -56,20 +66,12 @@ export const seo = {
 
 // ── Hero ─────────────────────────────────────────────────────
 export const hero = {
-  // heroImage: '' ← leave empty for CSS/SVG brand background (beautiful by default)
-  // Add a path like '/photos/hero-rajasthan.jpg' when final photo is ready
-  heroImage: '',
-  headline:  'Rajasthan Is More Than A Destination',
-  subline:   'It Is A Feeling.',
-  tagline:   'Grab Your Leisure',
-  ctaText:   'Plan My Trip',
-  ctaWhatsApp: true,
-  // Small framed poster images shown editorially in the hero
-  // TRIAL IMAGES — replace each with a portrait/landscape photo later
-  heroFrames: [
-    { image: posterRajasthan1, alt: 'Rajasthan travel poster — The Journey Begins', rotation: '-3deg' },
-    { image: posterRajasthan3, alt: 'Rajasthan travel poster — Where Every Journey Becomes a Story', rotation: '2deg' },
-  ],
+  // Hero banner — #GrabYourLeisure collage image
+  // Contains baked-in text — do NOT add duplicate heading on top
+  heroImage: heroBanner,
+  heroBannerAlt: '365 Wanderlust — #GrabYourLeisure — travel collage featuring Eiffel Tower, Colosseum, Big Ben, tropical beach and mountain destinations',
+  ctaText: 'Plan My Trip',
+  // heroFrames removed — banner image IS the hero visual now
 };
 
 // ── About / Our Story ────────────────────────────────────────

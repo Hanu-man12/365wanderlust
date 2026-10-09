@@ -79,7 +79,7 @@ export default function EnquiryForm() {
 
     // Compose WhatsApp message from form fields
     const lines = [
-      `Hello! I would like to enquire about a Rajasthan trip.`,
+      `New Enquiry from 365wanderlust.com:`,
       ``,
       `*Name:* ${form.name}`,
       `*Phone:* ${form.phone}`,
@@ -92,8 +92,8 @@ export default function EnquiryForm() {
 
     const waLink = getWhatsAppLink(lines);
     window.open(waLink, '_blank', 'noopener,noreferrer');
+    // Do NOT clear form yet — visitor may want to review what they sent
     setSubmitted(true);
-    setForm(initialState);
   };
 
   const handleReset = () => setSubmitted(false);
@@ -112,11 +112,11 @@ export default function EnquiryForm() {
         textAlign: 'center',
         minHeight: '300px',
       }}>
-        <CheckCircle size={48} color="#C8102E" style={{ marginBottom: '1rem' }} />
+        <CheckCircle size={48} color="#D0112B" style={{ marginBottom: '1rem' }} />
         <h3 style={{
           fontFamily: 'var(--font-serif)',
           fontSize: '1.6rem',
-          color: 'var(--color-brand-maroon)',
+          color: 'var(--color-brand-red)',
           margin: '0 0 0.5rem 0',
         }}>
           WhatsApp is Opening!
@@ -124,18 +124,18 @@ export default function EnquiryForm() {
         <p style={{
           fontFamily: 'var(--font-sans)',
           fontSize: '0.9rem',
-          color: 'var(--color-brown-light)',
+          color: 'var(--color-mid-grey)',
           lineHeight: 1.7,
-          maxWidth: '320px',
+          maxWidth: '340px',
           marginBottom: '1.5rem',
         }}>
-          Your enquiry has been composed. Complete the chat on WhatsApp to connect with us directly.
+          WhatsApp is opening with your enquiry details pre-filled. Please review the message and press <strong>Send</strong> inside WhatsApp to complete your enquiry.
         </p>
         <button
           onClick={handleReset}
           style={{
             background: 'none',
-            border: '1px solid var(--color-sand)',
+            border: '1px solid var(--color-light-grey)',
             borderRadius: '3px',
             padding: '0.6rem 1.4rem',
             fontFamily: 'var(--font-sans)',
@@ -143,8 +143,9 @@ export default function EnquiryForm() {
             fontWeight: 600,
             letterSpacing: '0.08em',
             textTransform: 'uppercase',
-            color: 'var(--color-brown-light)',
+            color: 'var(--color-mid-grey)',
             cursor: 'pointer',
+            minHeight: '44px',
           }}
         >
           Send Another Enquiry
