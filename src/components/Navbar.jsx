@@ -18,6 +18,11 @@ const NAV_LINKS = [
 ];
 
 // Logo — uses real logo-mark image from siteData.brand.logo
+// NOTE: The white background on this logo is BAKED INTO the PNG file,
+// not CSS. To get a clean transparent logo on dark navbars, please supply
+// a transparent-background version of logo-mark.png.
+// There is NO CSS background box here — the <img> sits directly on the navbar.
+// TO REVERT any spacing change: restore the padding value below to '0'.
 function LogoMark({ size = 38 }) {
   return (
     <img
@@ -31,6 +36,10 @@ function LogoMark({ size = 38 }) {
         objectFit: 'contain',
         display: 'block',
         flexShrink: 0,
+        // No background-color, no border-radius box — logo sits directly on navbar
+        background: 'none',
+        borderRadius: 0,
+        padding: 0,
       }}
     />
   );

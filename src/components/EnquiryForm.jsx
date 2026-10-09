@@ -13,7 +13,8 @@ const initialState = {
   phone: '',
   email: '',
   destination: '',
-  travelDates: '',
+  travelDateFrom: '',  // was: travelDates (plain text) → now two date inputs
+  travelDateTo: '',
   travellers: '',
   message: '',
 };
@@ -49,6 +50,10 @@ export default function EnquiryForm() {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
+  // Today's date in YYYY-MM-DD format — used as min for date pickers
+  // Computed once on render using local client date (not server)
+  const todayStr = new Date().toISOString().split('T')[0];
+
   // All destination options from siteData
   const destOptions = destinations.map(d => d.name);
 
@@ -78,16 +83,22 @@ export default function EnquiryForm() {
     }
 
     // Compose WhatsApp message from form fields
+    const travelDatesStr = form.travelDateFrom && form.travelDateTo
+      ? `${form.travelDateFrom} to ${form.travelDateTo}`
+      : form.travelDateFrom
+        ? `From ${form.travelDateFrom}`
+        : '';
+
     const lines = [
       `New Enquiry from 365wanderlust.com:`,
       ``,
       `*Name:* ${form.name}`,
       `*Phone:* ${form.phone}`,
-      form.email       ? `*Email:* ${form.email}` : null,
-      form.destination ? `*Destination:* ${form.destination}` : null,
-      form.travelDates ? `*Travel Dates:* ${form.travelDates}` : null,
-      form.travellers  ? `*No. of Travellers:* ${form.travellers}` : null,
-      form.message     ? `*Message:* ${form.message}` : null,
+      form.email        ? `*Email:* ${form.email}` : null,
+      form.destination  ? `*Destination:* ${form.destination}` : null,
+      travelDatesStr    ? `*Travel Dates:* ${travelDatesStr}` : null,
+      form.travellers   ? `*No. of Travellers:* ${form.travellers}` : null,
+      form.message      ? `*Message:* ${form.message}` : null,
     ].filter(Boolean).join('\n');
 
     const waLink = getWhatsAppLink(lines);
@@ -279,21 +290,56 @@ export default function EnquiryForm() {
         </select>
       </div>
 
-      {/* Row: Travel Dates + Travellers */}
+      {/* Row: Travel Dates (From + To) + Travellers */}
+      {/* Date approach: two linked <input type="date"> — From and To.
+          Both have today as minimum. "To" min updates when "From" is picked.
+          Optional field — not required. Flows into WhatsApp message as before. */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }} className="form-row">
         <div>
-          <label htmlFor="enq-dates" style={labelStyle}>Travel Dates (optional)</label>
-          <input
-            id="enq-dates"
-            name="travelDates"
-            type="text"
-            value={form.travelDates}
-            onChange={handleChange}
-            placeholder="e.g. Oct 15–20, 2026"
-            style={inputStyle}
-            onFocus={e => { e.target.style.borderColor = 'var(--color-sand)'; }}
-            onBlur={e => { e.target.style.borderColor = 'rgba(212,149,106,0.35)'; }}
-          />
+          <label style={labelStyle}>Travel Dates (optional)</label>
+          <div style={{ display: 'flex', gap: '0.4rem', flexDirection: 'column' }}>
+            {/* FROM date */}
+            <div style={{ position: 'relative' }}>
+              <label htmlFor="enq-date-from" style={{ ...labelStyle, fontSize: '0.62rem', marginBottom: '0.2rem', color: 'var(--color-mid-grey)' }}>
+                From
+              </label>
+              <input
+                id="enq-date-from"
+                name="travelDateFrom"
+                type="date"
+                value={form.travelDateFrom}
+                min={todayStr}
+                onChange={handleChange}
+                style={{
+                  ...inputStyle,
+                  // Native date picker needs explicit color on some browsers
+                  colorScheme: 'light',
+                }}
+                onFocus={e => { e.target.style.borderColor = 'var(--color-brand-red)'; }}
+                onBlur={e => { e.target.style.borderColor = 'rgba(212,149,106,0.35)'; }}
+              />
+            </div>
+            {/* TO date — min is automatically set to the selected From date (or today) */}
+            <div>
+              <label htmlFor="enq-date-to" style={{ ...labelStyle, fontSize: '0.62rem', marginBottom: '0.2rem', color: 'var(--color-mid-grey)' }}>
+                To
+              </label>
+              <input
+                id="enq-date-to"
+                name="travelDateTo"
+                type="date"
+                value={form.travelDateTo}
+                min={form.travelDateFrom || todayStr}
+                onChange={handleChange}
+                style={{
+                  ...inputStyle,
+                  colorScheme: 'light',
+                }}
+                onFocus={e => { e.target.style.borderColor = 'var(--color-brand-red)'; }}
+                onBlur={e => { e.target.style.borderColor = 'rgba(212,149,106,0.35)'; }}
+              />
+            </div>
+          </div>
         </div>
         <div>
           <label htmlFor="enq-travellers" style={labelStyle}>No. of Travellers</label>

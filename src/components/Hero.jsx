@@ -15,7 +15,10 @@ export default function Hero() {
       aria-label="365 Wanderlust — Grab Your Leisure"
       style={{
         position: 'relative',
-        minHeight: '100vh',
+        /* 88vh instead of 100vh — lets the About section peek through on first load
+           so visitors immediately see there is more content below.
+           TO REVERT: change 88vh back to 100vh here and in the media queries below. */
+        minHeight: '88vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -154,12 +157,21 @@ export default function Hero() {
           0%, 100% { transform: translateY(0); }
           50%       { transform: translateY(5px); }
         }
-        /* Reduce hero height on small short screens so CTA is always visible */
+        /* ── Hero height responsive overrides ──
+           All values reduced from 100vh to peek-through values.
+           TO REVERT: change each value back to the commented original. */
+
+        /* Mobile portrait — was 85vh */
         @media (max-width: 480px) {
+          #home { min-height: 78vh !important; }
+        }
+        /* Tablet — was implicitly 100vh */
+        @media (min-width: 481px) and (max-width: 1024px) {
           #home { min-height: 85vh !important; }
         }
+        /* Very short screens (landscape mobile) */
         @media (max-height: 600px) {
-          #home { min-height: 100svh !important; }
+          #home { min-height: 92svh !important; }
         }
         @media (prefers-reduced-motion: reduce) {
           #home a { animation: none !important; transition: none !important; }
