@@ -1,12 +1,16 @@
 // ============================================================
-//  Navbar — Sticky, transparent-to-solid, mobile hamburger
+//  Navbar — Fixed, ALWAYS TRANSPARENT, mobile hamburger
 //  Active section highlighting via IntersectionObserver
+//  ── Changes in this pass ──
+//  1. Background always transparent (never solid on scroll)
+//  2. Tagline "GRAB YOUR LEISURE" removed from logo block
+//  3. "PLAN MY TRIP" now scrolls to #contact (not WhatsApp)
+//  4. Nav links use crimson brand-red with text-shadow for legibility
+//  5. Consistent border-radius: 8px on buttons
 // ============================================================
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Menu, X, Send } from 'lucide-react';
 import { brand } from '../data/siteData';
-import { getWhatsAppLink } from '../utils/contactLinks';
-// Logo image imported via brand.logo (siteData) — not hard-coded here
 
 const NAV_LINKS = [
   { label: 'Home',         href: '#home'         },
@@ -17,12 +21,8 @@ const NAV_LINKS = [
   { label: 'Contact',      href: '#contact'      },
 ];
 
-// Logo — uses real logo-mark image from siteData.brand.logo
-// NOTE: The white background on this logo is BAKED INTO the PNG file,
-// not CSS. To get a clean transparent logo on dark navbars, please supply
-// a transparent-background version of logo-mark.png.
-// There is NO CSS background box here — the <img> sits directly on the navbar.
-// TO REVERT any spacing change: restore the padding value below to '0'.
+// Logo mark — uses brand.logo from siteData (single source)
+// ⚠️ White background baked into PNG — supply transparent PNG to remove white box
 function LogoMark({ size = 38 }) {
   return (
     <img
@@ -36,7 +36,6 @@ function LogoMark({ size = 38 }) {
         objectFit: 'contain',
         display: 'block',
         flexShrink: 0,
-        // No background-color, no border-radius box — logo sits directly on navbar
         background: 'none',
         borderRadius: 0,
         padding: 0,
@@ -46,24 +45,18 @@ function LogoMark({ size = 38 }) {
 }
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-  const menuRef = useRef(null);
-  const hamburgerRef = useRef(null);
+  const menuRef       = useRef(null);
+  const hamburgerRef  = useRef(null);
 
-  // Solid background after scroll
-  useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  // NOTE: isScrolled state REMOVED — navbar is always transparent now.
+  // No scroll listener needed for background changes.
 
   // Active section via IntersectionObserver
   useEffect(() => {
     const sectionIds = NAV_LINKS.map(l => l.href.slice(1));
-    const observers = [];
-
+    const observers  = [];
     sectionIds.forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -74,18 +67,16 @@ export default function Navbar() {
       obs.observe(el);
       observers.push(obs);
     });
-
     return () => observers.forEach(o => o.disconnect());
   }, []);
 
-  // Close mobile menu on Escape key / focus trap
+  // Focus trap + Escape key for mobile menu
   const handleKeyDown = useCallback((e) => {
     if (!mobileOpen) return;
     if (e.key === 'Escape') {
       setMobileOpen(false);
       hamburgerRef.current?.focus();
     }
-    // Basic focus trap: Tab
     if (e.key === 'Tab') {
       const focusable = menuRef.current?.querySelectorAll('a, button');
       if (!focusable || focusable.length === 0) return;
@@ -104,17 +95,12 @@ export default function Navbar() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  // Lock body scroll when mobile menu open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);
 
   const closeMobile = () => setMobileOpen(false);
-
-  const navBg = isScrolled || mobileOpen
-    ? 'rgba(28,15,10,0.97)'
-    : 'transparent';
 
   return (
     <>
@@ -124,14 +110,14 @@ export default function Navbar() {
         role="banner"
         style={{
           position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
+          top: 0, left: 0, right: 0,
           zIndex: 100,
-          background: navBg,
-          backdropFilter: isScrolled ? 'blur(10px)' : 'none',
-          borderBottom: isScrolled ? '1px solid rgba(200,134,26,0.2)' : 'none',
-          transition: 'background 0.4s ease, border-color 0.4s ease',
+          // ── ALWAYS TRANSPARENT — no background at any scroll position ──
+          background: mobileOpen ? 'rgba(13,13,13,0.98)' : 'transparent',
+          backdropFilter: 'none',
+          borderBottom: 'none',
+          boxShadow: 'none',
+          transition: 'background 0.3s ease',
         }}
       >
         <nav
@@ -147,7 +133,7 @@ export default function Navbar() {
             justifyContent: 'space-between',
           }}
         >
-          {/* Logo */}
+          {/* ── Logo: image + "365 WANDERLUST" wordmark, NO tagline ── */}
           <a
             href="#home"
             aria-label="365 Wanderlust — Go to homepage"
@@ -160,116 +146,117 @@ export default function Navbar() {
             }}
           >
             <LogoMark size={38} />
-            <div style={{ lineHeight: 1 }}>
-              <span style={{
-                display: 'block',
-                fontFamily: 'var(--font-serif)',
-                fontWeight: 700,
-                fontSize: '1.15rem',
-                color: 'white',
-                letterSpacing: '0.04em',
-              }}>
-                <span style={{ color: 'white' }}>365 </span>
-                <span style={{ color: '#C8102E' }}>WANDERLUST</span>
-              </span>
-              <span style={{
-                display: 'block',
-                fontFamily: 'var(--font-sans)',
-                fontWeight: 400,
-                fontSize: '0.58rem',
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-                color: 'rgba(200,134,26,0.9)',
-                marginTop: '1px',
-              }}>
-                {brand.tagline}
-              </span>
-            </div>
+            {/* Wordmark only — tagline REMOVED */}
+            <span style={{
+              fontFamily: 'var(--font-serif)',
+              fontWeight: 700,
+              fontSize: '1.15rem',
+              letterSpacing: '0.04em',
+              lineHeight: 1,
+              // Text-shadow for legibility on any background
+              textShadow: '0 1px 6px rgba(0,0,0,0.55)',
+            }}>
+              <span style={{ color: 'white' }}>365 </span>
+              <span style={{ color: '#D0112B' }}>WANDERLUST</span>
+            </span>
           </a>
 
-          {/* Desktop nav links */}
+          {/* ── Desktop nav links — crimson-red, text-shadow for legibility ── */}
           <ul
             style={{
               display: 'flex',
-              gap: '0.25rem',
+              gap: '0.15rem',
               listStyle: 'none',
-              margin: 0,
-              padding: 0,
+              margin: 0, padding: 0,
               alignItems: 'center',
             }}
             className="hidden-mobile"
           >
-            {NAV_LINKS.map(link => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  style={{
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.82rem',
-                    fontWeight: 500,
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                    color: activeSection === link.href.slice(1)
-                      ? '#C8861A'
-                      : 'rgba(245,237,216,0.85)',
-                    textDecoration: 'none',
-                    padding: '0.4rem 0.7rem',
-                    borderRadius: '3px',
-                    transition: 'color 0.2s',
-                    position: 'relative',
-                  }}
-                  aria-current={activeSection === link.href.slice(1) ? 'page' : undefined}
-                >
-                  {link.label}
-                  {/* Active underline */}
-                  {activeSection === link.href.slice(1) && (
-                    <span style={{
-                      position: 'absolute',
-                      bottom: '0',
-                      left: '0.7rem',
-                      right: '0.7rem',
-                      height: '1px',
-                      background: '#C8861A',
-                      borderRadius: '1px',
-                    }} />
-                  )}
-                </a>
-              </li>
-            ))}
+            {NAV_LINKS.map(link => {
+              const isActive = activeSection === link.href.slice(1);
+              return (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    aria-current={isActive ? 'page' : undefined}
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      // Always crimson-red — readable against any bg via text-shadow
+                      color: '#D0112B',
+                      textDecoration: 'none',
+                      padding: '0.4rem 0.7rem',
+                      borderRadius: '6px',
+                      transition: 'color 0.2s, opacity 0.2s',
+                      position: 'relative',
+                      opacity: isActive ? 1 : 0.85,
+                      // Subtle shadow so crimson stays readable on light & dark bgs
+                      textShadow: '0 1px 4px rgba(255,255,255,0.6), 0 1px 8px rgba(0,0,0,0.25)',
+                    }}
+                    onMouseOver={e => { e.currentTarget.style.opacity = '1'; }}
+                    onMouseOut={e => { e.currentTarget.style.opacity = isActive ? '1' : '0.85'; }}
+                  >
+                    {link.label}
+                    {isActive && (
+                      <span style={{
+                        position: 'absolute',
+                        bottom: '2px',
+                        left: '0.7rem',
+                        right: '0.7rem',
+                        height: '2px',
+                        background: '#D0112B',
+                        borderRadius: '2px',
+                        boxShadow: '0 1px 4px rgba(208,17,43,0.5)',
+                      }} />
+                    )}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
 
-          {/* Desktop CTA */}
+          {/* ── Desktop CTA: "PLAN MY TRIP" → scrolls to #contact ── */}
           <a
-            href={getWhatsAppLink()}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contact"
             className="hidden-mobile"
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.4rem',
-              background: '#C8102E',
+              background: '#D0112B',
               color: 'white',
               fontFamily: 'var(--font-sans)',
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: '0.78rem',
               letterSpacing: '0.08em',
               textTransform: 'uppercase',
               textDecoration: 'none',
-              padding: '0.55rem 1.1rem',
-              borderRadius: '3px',
-              transition: 'background 0.2s, transform 0.2s',
+              padding: '0.55rem 1.2rem',
+              borderRadius: '8px',
+              transition: 'background 0.2s, transform 0.2s, box-shadow 0.2s',
               whiteSpace: 'nowrap',
               minHeight: '44px',
+              boxShadow: '0 2px 12px rgba(208,17,43,0.35)',
             }}
-            onMouseOver={e => { e.currentTarget.style.background = '#a00d24'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseOut={e => { e.currentTarget.style.background = '#C8102E'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            onMouseOver={e => {
+              e.currentTarget.style.background = '#a50e22';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(208,17,43,0.45)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.background = '#D0112B';
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 2px 12px rgba(208,17,43,0.35)';
+            }}
           >
             <Send size={13} />
             Plan My Trip
           </a>
 
-          {/* Mobile hamburger */}
+          {/* ── Mobile hamburger ── */}
           <button
             ref={hamburgerRef}
             onClick={() => setMobileOpen(o => !o)}
@@ -280,10 +267,12 @@ export default function Navbar() {
             style={{
               background: 'none',
               border: 'none',
+              // White with shadow so visible on transparent navbar
               color: 'white',
+              filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.5))',
               cursor: 'pointer',
               padding: '0.5rem',
-              display: 'none', // shown via CSS media query
+              display: 'none',
               minWidth: '44px',
               minHeight: '44px',
               alignItems: 'center',
@@ -295,7 +284,7 @@ export default function Navbar() {
         </nav>
       </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* ── Mobile Menu Overlay ── */}
       {mobileOpen && (
         <div
           id="mobile-menu"
@@ -306,7 +295,7 @@ export default function Navbar() {
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(28,15,10,0.98)',
+            background: 'rgba(13,13,13,0.98)',
             zIndex: 99,
             display: 'flex',
             flexDirection: 'column',
@@ -327,7 +316,7 @@ export default function Navbar() {
                     fontFamily: 'var(--font-serif)',
                     fontSize: 'clamp(1.6rem, 7vw, 2.2rem)',
                     fontWeight: 600,
-                    color: activeSection === link.href.slice(1) ? '#C8861A' : 'var(--color-cream)',
+                    color: activeSection === link.href.slice(1) ? '#D0112B' : '#F8F6F3',
                     textDecoration: 'none',
                     padding: '0.6rem 2rem',
                     letterSpacing: '0.04em',
@@ -340,43 +329,32 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* Mobile CTA */}
+          {/* Mobile CTA → Contact section */}
           <a
-            href={getWhatsAppLink()}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contact"
             onClick={closeMobile}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              background: '#C8102E',
+              background: '#D0112B',
               color: 'white',
               fontFamily: 'var(--font-sans)',
-              fontWeight: 600,
+              fontWeight: 700,
               fontSize: '0.9rem',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               textDecoration: 'none',
               padding: '0.85rem 2rem',
-              borderRadius: '4px',
+              borderRadius: '8px',
               marginTop: '1.5rem',
               minHeight: '52px',
+              boxShadow: '0 4px 16px rgba(208,17,43,0.4)',
             }}
           >
             <Send size={16} />
-            Plan My Trip on WhatsApp
+            Plan My Trip
           </a>
-
-          {/* Decorative script line */}
-          <p style={{
-            fontFamily: 'var(--font-script)',
-            fontSize: '1.1rem',
-            color: 'rgba(200,134,26,0.5)',
-            marginTop: '2rem',
-          }}>
-            Grab Your Leisure
-          </p>
         </div>
       )}
 
@@ -386,7 +364,7 @@ export default function Navbar() {
           .show-mobile   { display: flex !important; }
         }
         @media (min-width: 769px) {
-          .show-mobile { display: none !important; }
+          .show-mobile   { display: none !important; }
           .hidden-mobile { display: flex !important; }
         }
         @keyframes fadeInDown {

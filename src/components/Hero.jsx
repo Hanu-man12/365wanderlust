@@ -95,7 +95,7 @@ export default function Hero() {
             textTransform: 'uppercase',
             textDecoration: 'none',
             padding: 'clamp(0.85rem, 2vw, 1rem) clamp(2rem, 5vw, 3.5rem)',
-            borderRadius: '4px',
+            borderRadius: '8px',
             minHeight: '52px',
             minWidth: '200px',
             boxShadow: '0 4px 24px rgba(208,17,43,0.45), 0 2px 8px rgba(0,0,0,0.3)',

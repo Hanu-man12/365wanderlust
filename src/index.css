@@ -44,6 +44,12 @@
 
   /* Spacing */
   --spacing-section: 6rem;
+
+  /* ── Border Radius tokens ── */
+  --radius-sm:  6px;   /* small: tags, badges, icon buttons     */
+  --radius-md:  8px;   /* medium: buttons, inputs, small cards  */
+  --radius-lg:  12px;  /* large: package/destination cards      */
+  --radius-xl:  16px;  /* extra: framed image, modal, lightbox  */
 }
 
 /* ── Base Styles ── */
@@ -150,6 +156,7 @@ section[id] {
   display: inline-block;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  border-radius: var(--radius-sm);
 }
 .framed-image:hover {
   box-shadow: 0 8px 32px rgba(28,15,10,0.22), 0 2px 8px rgba(28,15,10,0.12);
