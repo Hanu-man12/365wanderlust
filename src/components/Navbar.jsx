@@ -146,18 +146,17 @@ export default function Navbar() {
             }}
           >
             <LogoMark size={38} />
-            {/* Wordmark only — tagline REMOVED */}
+            {/* Wordmark only — tagline REMOVED — full text crimson red */}
             <span style={{
               fontFamily: 'var(--font-serif)',
               fontWeight: 700,
               fontSize: '1.15rem',
               letterSpacing: '0.04em',
               lineHeight: 1,
-              // Text-shadow for legibility on any background
-              textShadow: '0 1px 6px rgba(0,0,0,0.55)',
+              color: '#D0112B',
+              textShadow: '0 1px 6px rgba(0,0,0,0.4)',
             }}>
-              <span style={{ color: 'white' }}>365 </span>
-              <span style={{ color: '#D0112B' }}>WANDERLUST</span>
+              365 WANDERLUST
             </span>
           </a>
 
