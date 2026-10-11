@@ -1,5 +1,6 @@
 // ============================================================
 //  SectionHeading — Reusable section title with ornament
+//  Dark-mode aware: responds to html.dark class via CSS.
 // ============================================================
 import React from 'react';
 
@@ -15,10 +16,11 @@ export default function SectionHeading({ label, heading, subtext, align = 'cente
   const isDark = theme === 'dark';
 
   return (
-    <div style={{ textAlign: isCenter ? 'center' : 'left', marginBottom: '3rem' }}>
+    <div className={`section-heading ${isDark ? 'section-heading--dark' : 'section-heading--light'}`}
+      style={{ textAlign: isCenter ? 'center' : 'left', marginBottom: '3rem' }}>
       {/* Label */}
       {label && (
-        <p style={{
+        <p className="sh-label" style={{
           fontFamily: 'var(--font-sans)',
           fontSize: '0.7rem',
           fontWeight: 600,
@@ -32,7 +34,7 @@ export default function SectionHeading({ label, heading, subtext, align = 'cente
       )}
 
       {/* Heading */}
-      <h2 style={{
+      <h2 className="sh-heading" style={{
         fontFamily: 'var(--font-serif)',
         fontSize: 'clamp(2rem, 5vw, 3.5rem)',
         fontWeight: 700,
@@ -52,7 +54,6 @@ export default function SectionHeading({ label, heading, subtext, align = 'cente
         margin: '1rem 0',
       }}>
         <div style={{ height: '1px', width: '40px', background: `linear-gradient(to right, transparent, ${isDark ? 'rgba(200,134,26,0.5)' : 'var(--color-sand)'})` }} />
-        {/* Ornament dot — small mandala / floral */}
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <circle cx="8" cy="8" r="2" fill={isDark ? '#C8861A' : 'var(--color-sand)'} />
           <circle cx="8" cy="8" r="5" stroke={isDark ? '#C8861A' : 'var(--color-sand)'} strokeWidth="0.8" fill="none" />
@@ -66,7 +67,7 @@ export default function SectionHeading({ label, heading, subtext, align = 'cente
 
       {/* Subtext */}
       {subtext && (
-        <p style={{
+        <p className="sh-subtext" style={{
           fontFamily: 'var(--font-sans)',
           fontSize: 'clamp(0.9rem, 2vw, 1.05rem)',
           color: isDark ? 'rgba(245,237,216,0.7)' : 'var(--color-brown-light)',
@@ -77,6 +78,19 @@ export default function SectionHeading({ label, heading, subtext, align = 'cente
           {subtext}
         </p>
       )}
+
+      <style>{`
+        /* Light sections: dark mode overrides heading/subtext color */
+        html.dark .section-heading--light .sh-heading {
+          color: #f0e8dc !important;
+        }
+        html.dark .section-heading--light .sh-label {
+          color: rgba(208, 17, 43, 0.9) !important;
+        }
+        html.dark .section-heading--light .sh-subtext {
+          color: rgba(200, 192, 180, 0.75) !important;
+        }
+      `}</style>
     </div>
   );
 }

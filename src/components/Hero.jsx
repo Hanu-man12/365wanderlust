@@ -1,8 +1,18 @@
 // ============================================================
 //  Hero Section — Full-bleed banner image + single Plan My Trip CTA
-//  Banner image contains baked-in "#GrabYourLeisure" text — 
-//  do NOT recreate that text as HTML on top of it.
-//  CTA scrolls to #contact section (anchor link).
+//  Banner image: 1600×900 (16:9 landscape).
+//  Key content — "#GrabYourLeisure" text + compass/airplane artwork —
+//  is centered in the top half of the image.
+//
+//  Responsive strategy:
+//  - Wide screens (≥769px): object-fit:cover, object-position:center top
+//    → image fills width, top content stays visible
+//  - Narrow mobile (<480px portrait): image is shown full-width at its
+//    natural 16:9 ratio (contain + brand-red letterbox bg beneath it),
+//    so NO content is cropped. CTA floats below.
+//  - Landscape mobile / tablet (480-768px): cover + center top (wide
+//    enough that 16:9 crop is manageable, artwork stays visible)
+//  - Very short viewports (landscape phone): 80vh cap to keep CTA visible
 // ============================================================
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
@@ -13,18 +23,19 @@ export default function Hero() {
     <section
       id="home"
       aria-label="365 Wanderlust — Grab Your Leisure"
+      className="hero-section"
       style={{
         position: 'relative',
-        /* PEEK-THROUGH FIX: use calc(100vh - 120px) so the About section
-           heading is always visible at first load without any scrolling.
-           120px = ~72px navbar + ~48px of About's heading peeking in.
-           TO REVERT: change back to minHeight: '100vh'                    */
+        /* Default (desktop): near-full viewport height with peek-through */
         minHeight: 'calc(100vh - 120px)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-end',
         overflow: 'hidden',
+        /* Brand-red letterbox bg — visible on narrow viewports where the
+           16:9 image doesn't fill the full height in "contain" mode      */
+        background: '#0D0D0D',
       }}
     >
       {/* ── Full-bleed banner image ── */}
@@ -34,20 +45,21 @@ export default function Hero() {
         fetchPriority="high"
         loading="eager"
         decoding="async"
+        className="hero-img"
         style={{
           position: 'absolute',
           inset: 0,
           width: '100%',
           height: '100%',
+          /* Default (desktop ≥769px): cover + center-top
+             Keeps artwork at top visible; bottom may be cropped (acceptable) */
           objectFit: 'cover',
-          // Center-top keeps "#GrabYourLeisure" text visible on all screen sizes
           objectPosition: 'center top',
           zIndex: 0,
         }}
       />
 
-      {/* ── Gradient overlay — bottom only, for CTA readability ──
-           Does NOT darken the banner text/imagery area              */}
+      {/* ── Gradient overlay — bottom only, for CTA readability ── */}
       <div
         aria-hidden="true"
         style={{
@@ -55,8 +67,8 @@ export default function Hero() {
           bottom: 0,
           left: 0,
           right: 0,
-          height: '45%',
-          background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.3) 50%, transparent 100%)',
+          height: '50%',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.35) 55%, transparent 100%)',
           zIndex: 1,
           pointerEvents: 'none',
         }}
@@ -158,25 +170,63 @@ export default function Hero() {
           0%, 100% { transform: translateY(0); }
           50%       { transform: translateY(5px); }
         }
-        /* ── Hero peek-through responsive overrides ──
-           Goal: ~80-120px of About section always visible at first load.
-           calc(100vh - Xpx) ensures the hero never fills the full viewport.
-           TO REVERT any of these: change back to 100vh.                    */
 
-        /* Mobile 360-480px: reduce more aggressively */
+        /* ── NARROW MOBILE (portrait ≤ 480px) ──────────────────────────────
+           The 16:9 image is too wide relative to portrait height.
+           Use object-fit:contain so the FULL image is visible — no content
+           cropped. Near-black bg fills letterbox areas (brand-consistent).
+           Hero height = natural 16:9 height of the screen width.
+           Formula: 100vw ÷ (16/9) = 56.25vw. Add 80px for CTA below.    */
         @media (max-width: 480px) {
-          #home { min-height: calc(100vh - 140px) !important; }
+          .hero-section {
+            min-height: calc(56.25vw + 80px) !important;
+            justify-content: flex-end !important;
+          }
+          .hero-img {
+            object-fit: contain !important;
+            object-position: center top !important;
+          }
         }
-        /* Tablet 481-1024px */
-        @media (min-width: 481px) and (max-width: 1024px) {
-          #home { min-height: calc(100vh - 130px) !important; }
-        }
-        /* Half-screen desktop and up (> 1024px): default calc above applies */
 
-        /* Very short landscape screens — ensure CTA still visible */
-        @media (max-height: 500px) {
-          #home { min-height: 80vh !important; }
+        /* ── TABLET / WIDE MOBILE (481px – 768px) ──────────────────────────
+           Landscape-ish viewports — cover works, center-top keeps artwork.
+           Reduce height slightly so CTA always visible.                   */
+        @media (min-width: 481px) and (max-width: 768px) {
+          .hero-section {
+            min-height: calc(100vh - 130px) !important;
+          }
+          .hero-img {
+            object-fit: cover !important;
+            object-position: center top !important;
+          }
         }
+
+        /* ── DESKTOP (≥ 769px) ─────────────────────────────────────────────
+           Wide viewport — 16:9 image fills width nicely.
+           object-position: 50% 15% shifts slightly above center so the
+           "#GrabYourLeisure" heading and artwork are comfortably on-screen
+           rather than the bottom half of the image dominating.            */
+        @media (min-width: 769px) {
+          .hero-section {
+            min-height: calc(100vh - 120px) !important;
+          }
+          .hero-img {
+            object-fit: cover !important;
+            object-position: 50% 15% !important;
+          }
+        }
+
+        /* ── VERY SHORT LANDSCAPE SCREENS ──────────────────────────────────
+           e.g. phone in landscape (height < 500px). Cap at 80vh so the
+           CTA button is never pushed off-screen.                          */
+        @media (max-height: 500px) {
+          .hero-section { min-height: 80vh !important; }
+          .hero-img {
+            object-fit: cover !important;
+            object-position: center center !important;
+          }
+        }
+
         @media (prefers-reduced-motion: reduce) {
           #home a { animation: none !important; transition: none !important; }
         }

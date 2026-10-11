@@ -54,6 +54,20 @@
       "slogan": "Grab Your Leisure"
     }
     </script>
+    <!-- ── Theme: apply saved preference BEFORE paint to avoid flash ──
+         Reads localStorage 'theme'. If 'dark' → adds .dark to <html>.
+         Must be inline (not deferred) so it runs synchronously before
+         any CSS or React renders, preventing a white flash on refresh. -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('365w-theme');
+          if (saved === 'dark') {
+            document.documentElement.classList.add('dark');
+          }
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

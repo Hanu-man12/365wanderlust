@@ -60,6 +60,35 @@ html {
   background-color: var(--color-brand-white);
 }
 
+/* ── DARK MODE — applied when <html class="dark"> ─────────────────────────
+   Override surface and text tokens. Brand crimson stays vivid.
+   Aim: charcoal/near-black surfaces, warm off-white text, crimson accents. */
+html.dark {
+  /* Page background */
+  background-color: #0f0f0f;
+  color: #e8e0d5;
+
+  /* Override CSS custom properties for dark surfaces */
+  --color-brand-white:    #0f0f0f;
+  --color-brand-black:    #f0ebe3;
+  --color-brand-charcoal: #1e1e1e;
+  --color-off-white:      #141414;
+  --color-light-grey:     #2a2a2a;
+  --color-mid-grey:       #9a9490;
+  --color-dark-grey:      #e8e0d5;
+
+  /* Legacy aliases — dark mode overrides */
+  --color-cream:          #141414;
+  --color-cream-dark:     #2a2a2a;
+  --color-ink:            #1a1a1a;
+  --color-ink-light:      #242424;
+  --color-brown:          #e0d8cc;
+  --color-brown-light:    #9a9490;
+  --color-sand:           #D0112B;
+  --color-gold:           #D0112B;
+  --color-gold-light:     #ff4d6a;
+}
+
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -70,9 +99,12 @@ html {
   }
 }
 
-/* ── Scroll Margin for sticky navbar ── */
+/* ── Scroll Margin for sticky navbar ──
+   Ensures anchor links (#about, #contact etc.) scroll to a position
+   where the section heading is below the 72px fixed navbar.
+   Previously 72px — now 80px to give 8px breathing room above heading. */
 section[id] {
-  scroll-margin-top: 72px;
+  scroll-margin-top: 80px;
 }
 
 /* ── Custom Scrollbar ── */
@@ -126,10 +158,19 @@ section[id] {
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
 }
+/* Dark mode: parchment → dark surface */
+html.dark .bg-parchment {
+  background-color: #161616;
+  background-image: none;
+}
 
 /* ── Dark ink section ── */
 .bg-ink {
   background-color: var(--color-ink);
+}
+/* Dark mode: ink section becomes slightly lighter dark */
+html.dark .bg-ink {
+  background-color: #0a0a0a;
 }
 
 /* ── Reveal animation (IntersectionObserver controlled) ── */
@@ -173,4 +214,146 @@ section[id] {
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+}
+
+/* ============================================================
+   DARK MODE — Component-level overrides
+   Applied when <html class="dark">
+   ============================================================ */
+
+/* ── Framed image (polaroid) — dark bg ── */
+html.dark .framed-image {
+  background: #1e1e1e;
+  border-color: #333;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 1px 4px rgba(0,0,0,0.35);
+}
+
+/* ── Destinations section (white bg) ── */
+html.dark #destinations {
+  background: #111111 !important;
+}
+
+/* ── Destination highlight tags ── */
+html.dark #destinations li {
+  background: rgba(208, 17, 43, 0.12) !important;
+  border-color: rgba(208, 17, 43, 0.25) !important;
+  color: #c8c0b4 !important;
+}
+
+/* ── WhyChooseUs cards ── */
+html.dark #why {
+  background: #0f0f0f !important;
+}
+html.dark #why article,
+html.dark .why-card {
+  background: #1a1a1a !important;
+  border-color: rgba(208, 17, 43, 0.18) !important;
+}
+html.dark #why h3,
+html.dark .why-card h3 {
+  color: #e8e0d5 !important;
+}
+html.dark #why p,
+html.dark .why-card p {
+  color: #9a9490 !important;
+}
+
+/* ── Gallery section ── */
+html.dark #gallery {
+  background: #141414 !important;
+}
+
+/* ── Contact section (parchment bg overridden separately) ── */
+html.dark #contact {
+  background: #141414 !important;
+}
+
+/* ── Enquiry form card ── */
+html.dark #contact form,
+html.dark .enquiry-form-card {
+  background: #1e1e1e !important;
+  border-color: rgba(208, 17, 43, 0.2) !important;
+}
+
+/* ── Form inputs in dark mode ── */
+html.dark #contact input,
+html.dark #contact select,
+html.dark #contact textarea {
+  background: #272727 !important;
+  color: #e8e0d5 !important;
+  border-color: rgba(208, 17, 43, 0.25) !important;
+}
+html.dark #contact input::placeholder,
+html.dark #contact textarea::placeholder {
+  color: #666 !important;
+}
+html.dark #contact select option {
+  background: #272727;
+  color: #e8e0d5;
+}
+
+/* ── Contact left-column text ── */
+html.dark #contact h3,
+html.dark #contact .contact-heading {
+  color: #e8e0d5 !important;
+}
+html.dark #contact p {
+  color: #9a9490 !important;
+}
+html.dark #contact a[href^="tel"],
+html.dark #contact a[href^="mailto"] {
+  color: #c8c0b4 !important;
+}
+
+/* ── Submitted confirmation box in dark mode ── */
+html.dark .enquiry-submitted {
+  background: #1e1e1e !important;
+  border-color: rgba(208, 17, 43, 0.2) !important;
+}
+html.dark .enquiry-submitted p {
+  color: #9a9490 !important;
+}
+
+/* ── Copy button in dark mode ── */
+html.dark .copy-email-btn {
+  border-color: rgba(208, 17, 43, 0.2) !important;
+  color: #9a9490 !important;
+}
+
+/* ── Navbar dark mode ── */
+html.dark header {
+  /* glass bg is already handled via JS rgba — just ensure border is right */
+}
+
+/* ── Navbar mobile overlay dark mode ── */
+html.dark #mobile-menu {
+  background: rgba(10, 10, 10, 0.98) !important;
+}
+
+/* ── Focus visible in dark mode ── */
+html.dark :focus-visible {
+  outline-color: #ff4d6a;
+}
+
+/* ── Scrollbar in dark mode ── */
+html.dark ::-webkit-scrollbar-track { background: #1a1a1a; }
+html.dark ::-webkit-scrollbar-thumb { background: var(--color-brand-red); }
+
+/* ── Section headings in dark mode ── */
+html.dark h2[style*="color: var(--color-brand-maroon)"],
+html.dark h2[style*="var(--color-brand-maroon)"] {
+  color: #f0e8dc !important;
+}
+
+/* ── Destination cards text ── */
+html.dark #destinations h3 { color: #f0e8dc !important; }
+html.dark #destinations p  { color: #a8a09a !important; }
+html.dark #destinations article {
+  border-color: rgba(208, 17, 43, 0.15) !important;
+}
+
+/* ── Destination enquire links ── */
+html.dark #destinations a[style*="var(--color-brand-red)"] {
+  color: var(--color-brand-red) !important;
+  border-color: var(--color-brand-red) !important;
 }

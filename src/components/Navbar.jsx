@@ -1,12 +1,12 @@
 // ============================================================
-//  Navbar — Fixed, ALWAYS TRANSPARENT, mobile hamburger
+//  Navbar — Fixed, transparent at top → glassmorphism on scroll
 //  Active section highlighting via IntersectionObserver
-//  ── Changes in this pass ──
-//  1. Background always transparent (never solid on scroll)
-//  2. Tagline "GRAB YOUR LEISURE" removed from logo block
-//  3. "PLAN MY TRIP" now scrolls to #contact (not WhatsApp)
-//  4. Nav links use crimson brand-red with text-shadow for legibility
-//  5. Consistent border-radius: 8px on buttons
+//  ── Design ──
+//  1. At top: fully transparent, hero image visible through it
+//  2. On scroll: semi-transparent glass (rgba bg + backdrop-blur)
+//     Crimson-red nav text stays readable via text-shadow
+//  3. z-index: 100 — content sits below at z-index 0 (no overlap)
+//  4. scroll-margin-top on sections (index.css) clears the 72px navbar
 // ============================================================
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Menu, X, Send } from 'lucide-react';
@@ -16,7 +16,6 @@ const NAV_LINKS = [
   { label: 'Home',         href: '#home'         },
   { label: 'About',        href: '#about'        },
   { label: 'Destinations', href: '#destinations' },
-  { label: 'Packages',     href: '#packages'     },
   { label: 'Gallery',      href: '#gallery'      },
   { label: 'Contact',      href: '#contact'      },
 ];
@@ -47,11 +46,29 @@ function LogoMark({ size = 38 }) {
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [isScrolled, setIsScrolled] = useState(false);
+  // Track dark mode so glass color adapts when theme toggles
+  const [isDark, setIsDark] = useState(
+    () => document.documentElement.classList.contains('dark')
+  );
   const menuRef       = useRef(null);
   const hamburgerRef  = useRef(null);
 
-  // NOTE: isScrolled state REMOVED — navbar is always transparent now.
-  // No scroll listener needed for background changes.
+  // Detect scroll — switch to glass when user scrolls past 60px
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Sync with theme changes (when ThemeToggle clicks)
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   // Active section via IntersectionObserver
   useEffect(() => {
@@ -112,12 +129,23 @@ export default function Navbar() {
           position: 'fixed',
           top: 0, left: 0, right: 0,
           zIndex: 100,
-          // ── ALWAYS TRANSPARENT — no background at any scroll position ──
-          background: mobileOpen ? 'rgba(13,13,13,0.98)' : 'transparent',
-          backdropFilter: 'none',
-          borderBottom: 'none',
-          boxShadow: 'none',
-          transition: 'background 0.3s ease',
+          // ── TRANSPARENT at top → GLASS on scroll ──
+          // Dark mode glass: darker semi-opaque bg
+          // Light mode glass: near-black (crimson text stays readable)
+          background: mobileOpen
+            ? (isDark ? 'rgba(8, 8, 8, 0.98)' : 'rgba(13,13,13,0.98)')
+            : isScrolled
+              ? (isDark ? 'rgba(8, 8, 8, 0.78)' : 'rgba(13, 13, 13, 0.72)')
+              : 'transparent',
+          backdropFilter: isScrolled && !mobileOpen ? 'blur(14px) saturate(1.4)' : 'none',
+          WebkitBackdropFilter: isScrolled && !mobileOpen ? 'blur(14px) saturate(1.4)' : 'none',
+          borderBottom: isScrolled && !mobileOpen
+            ? '1px solid rgba(208, 17, 43, 0.18)'
+            : 'none',
+          boxShadow: isScrolled && !mobileOpen
+            ? '0 2px 20px rgba(0,0,0,0.25)'
+            : 'none',
+          transition: 'background 0.35s ease, backdrop-filter 0.35s ease, box-shadow 0.35s ease, border-bottom 0.35s ease',
         }}
       >
         <nav

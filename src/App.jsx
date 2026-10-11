@@ -1,19 +1,18 @@
 // ============================================================
 //  App.jsx — Root component, assembles all sections
 //  ONE page only. No React Router. Sections scroll in-page.
+//  NOTE: Packages and Journey sections have been removed.
 // ============================================================
 import React from 'react';
 import Navbar       from './components/Navbar';
 import Hero         from './components/Hero';
 import About        from './components/About';
 import Destinations from './components/Destinations';
-import Packages     from './components/Packages';
 import WhyChooseUs  from './components/WhyChooseUs';
-import Journey      from './components/Journey';
 import Gallery      from './components/Gallery';
 import Contact      from './components/Contact';
 import Footer       from './components/Footer';
-import WhatsAppFloat from './components/WhatsAppFloat';
+import ThemeToggle  from './components/ThemeToggle';
 
 export default function App() {
   return (
@@ -26,17 +25,15 @@ export default function App() {
         <Hero />
         <About />
         <Destinations />
-        <Packages />
         <WhyChooseUs />
-        <Journey />
         <Gallery />
         <Contact />
       </main>
 
       <Footer />
 
-      {/* Floating WhatsApp button */}
-      <WhatsAppFloat />
+      {/* Floating theme toggle (bottom-right) */}
+      <ThemeToggle />
     </>
   );
 }

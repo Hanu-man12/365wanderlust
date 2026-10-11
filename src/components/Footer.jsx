@@ -47,7 +47,6 @@ const NAV_LINKS = [
   { label: 'Home',         href: '#home'         },
   { label: 'About',        href: '#about'        },
   { label: 'Destinations', href: '#destinations' },
-  { label: 'Packages',     href: '#packages'     },
   { label: 'Gallery',      href: '#gallery'      },
   { label: 'Contact',      href: '#contact'      },
 ];
