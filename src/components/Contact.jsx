@@ -80,11 +80,10 @@ export default function Contact() {
   // while visually positioning it on the left on desktop via CSS order.
   const ContactInfo = () => (
     <div className="contact-info-col">
-      {/* Brand heading */}
-      <h3 style={{
-        fontFamily: 'var(--font-serif)',
+      {/* Brand heading — Montserrat ExtraBold Italic via brand-wordmark class */}
+      <h3 className="brand-wordmark" style={{
         fontSize: 'clamp(1.3rem, 3vw, 1.8rem)',
-        fontWeight: 700,
+        letterSpacing: '0.02em',
         margin: '0 0 0.5rem 0',
       }}>
         <span style={{ color: '#D0112B' }}>365 </span>

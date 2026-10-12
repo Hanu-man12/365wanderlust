@@ -188,10 +188,8 @@ export default function Navbar() {
             }}
           >
             <LogoMark size={38} />
-            {/* Wordmark only — tagline REMOVED — full text crimson red */}
-            <span style={{
-              fontFamily: 'var(--font-serif)',
-              fontWeight: 700,
+            {/* Wordmark only — tagline REMOVED — Montserrat ExtraBold Italic */}
+            <span className="brand-wordmark" style={{
               fontSize: '1.15rem',
               letterSpacing: '0.04em',
               lineHeight: 1,

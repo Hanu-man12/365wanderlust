@@ -19,11 +19,8 @@ function FooterLogo() {
         style={{ width: 34, height: 34, objectFit: 'contain', display: 'block', flexShrink: 0 }}
       />
       <div>
-        <div style={{
-          fontFamily: 'var(--font-serif)',
-          fontWeight: 700,
+        <div className="brand-wordmark" style={{
           fontSize: '1rem',
-          color: 'white',
           letterSpacing: '0.04em',
         }}>
           <span style={{ color: 'white' }}>365 </span>
