@@ -90,6 +90,18 @@ export default function SectionHeading({ label, heading, subtext, align = 'cente
         html.dark .section-heading--light .sh-subtext {
           color: rgba(200, 192, 180, 0.75) !important;
         }
+
+        /* ── Dark sections (theme="dark") in dark mode ──
+           Gallery, WhyChooseUs etc. use theme="dark" → section-heading--dark.
+           var(--color-cream) gets remapped to near-black in html.dark,
+           making headings invisible. Force them back to white/light.
+           Exception: sh-label keeps its existing golden color — not touched. */
+        html.dark .section-heading--dark .sh-heading {
+          color: #ffffff !important;
+        }
+        html.dark .section-heading--dark .sh-subtext {
+          color: rgba(245, 237, 216, 0.70) !important;
+        }
       `}</style>
     </div>
   );
