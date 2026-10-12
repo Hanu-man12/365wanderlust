@@ -20,20 +20,35 @@ import Reveal from './Reveal';
 
 const ICON_MAP = { Compass, Heart, Users, MapPin, Star, Shield };
 
-const CARD_WIDTH = 300;
-const CARD_GAP   = 24;
+// ── Card sizing ────────────────────────────────────────────────
+// Desktop/tablet: 300px wide cards
+// Mobile (≤640px): 240px — so ~1.3 cards fit at 375px width,
+//   giving the eye a horizontal reference to perceive vertical offsets.
+// CARD_WIDTH is used for setWidth calculation; actual rendered width
+// is controlled by the data-card wrapper CSS class below.
+const CARD_WIDTH_DESKTOP = 300;
+const CARD_WIDTH_MOBILE  = 240;
+const CARD_GAP           = 20;
 
-// ── Wave settings ──────────────────────────────────────────────
-// AMPLITUDE: max px a card travels up/down. 18px = visible but not chaotic.
-// On narrow screens we reduce this via JS (see below).
-const WAVE_AMPLITUDE_DESKTOP = 18;
-const WAVE_AMPLITUDE_MOBILE  = 8;   // ≤ 640px viewport width
+// ── Wave amplitude settings ────────────────────────────────────
+// BEFORE (too subtle): desktop=18px, mobile=8px
+// AFTER  (clearly visible):
+//   desktop   (>1024px) : 42px  — obvious curve at a glance
+//   tablet  (641-1024px): 32px  — proportionally strong on mid screens
+//   mobile    (≤640px)  : 28px  — large enough to read clearly on 1-card view
+//
+// Values chosen so peak-to-trough (2×amp) is:
+//   desktop: 84px, tablet: 64px, mobile: 56px
+// That is comfortably visible relative to ~220px card height.
+const WAVE_AMPLITUDE_DESKTOP = 42;
+const WAVE_AMPLITUDE_TABLET  = 32;
+const WAVE_AMPLITUDE_MOBILE  = 28;
 
-// WAVE_PERIOD: how many px of horizontal travel = one full sine cycle.
-// 600px = one smooth wave per ~2 card widths.
+// WAVE_PERIOD: px of horizontal travel per full sine cycle.
+// Kept at 600px — one full wave fits across ~2 card widths (natural rhythm).
 const WAVE_PERIOD = 600;
 
-// SPEED in px per rAF frame (~60fps). 0.8 = ~48px/s (was 0.5 before).
+// SPEED in px per rAF frame — unchanged from previous version.
 const SPEED = 0.8;
 
 // ── Architectural line-art SVG ─────────────────────────────────
@@ -95,8 +110,9 @@ function ApproachCard({ item }) {
   const IconComponent = ICON_MAP[item.icon];
   return (
     <div
+      className="approach-card"
       style={{
-        width: `${CARD_WIDTH}px`,
+        /* width is set responsively via CSS class .approach-card below */
         flexShrink: 0,
         padding: '1.8rem',
         background: 'rgba(255,255,255,0.10)',
@@ -165,16 +181,23 @@ export default function WhyChooseUs() {
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
 
-  // Total px width of ONE complete set of cards (6 cards + gaps)
-  const setWidth = whyChooseUs.length * (CARD_WIDTH + CARD_GAP);
+  // Total px width of ONE complete set of cards (6 cards + gaps).
+  // Uses desktop card width for setWidth — the JS loop reset point.
+  // This is fine because posRef tracks absolute px regardless of card render width.
+  const setWidth = whyChooseUs.length * (CARD_WIDTH_DESKTOP + CARD_GAP);
 
   // ── Wave animation via rAF ─────────────────────────────────
   // Each card gets its own <div ref> so we can set translateY individually.
   // trackRef scrolls horizontally; per-card refs get a sine-wave translateY.
   const cardRefs = useRef([]);
 
-  const getAmplitude = () =>
-    window.innerWidth <= 640 ? WAVE_AMPLITUDE_MOBILE : WAVE_AMPLITUDE_DESKTOP;
+  // Three-tier amplitude: desktop / tablet / mobile
+  const getAmplitude = () => {
+    const w = window.innerWidth;
+    if (w <= 640)  return WAVE_AMPLITUDE_MOBILE;
+    if (w <= 1024) return WAVE_AMPLITUDE_TABLET;
+    return WAVE_AMPLITUDE_DESKTOP;
+  };
 
   const animate = useCallback(() => {
     if (!trackRef.current) return;
@@ -318,8 +341,10 @@ export default function WhyChooseUs() {
             style={{
               display: 'flex',
               gap: `${CARD_GAP}px`,
-              // Extra top/bottom padding to accommodate wave amplitude
-              padding: `${WAVE_AMPLITUDE_DESKTOP + 8}px 1.5rem ${WAVE_AMPLITUDE_DESKTOP + 16}px`,
+              // Padding accommodates the largest possible amplitude (desktop = 42px)
+              // so cards never get clipped at the top or bottom of the wave arc.
+              // top: amp + 10px breathing room; bottom: amp + 18px (extra for shadow)
+              padding: `${WAVE_AMPLITUDE_DESKTOP + 10}px 1.5rem ${WAVE_AMPLITUDE_DESKTOP + 18}px`,
               width: 'max-content',
               // Reduced-motion only: allow manual horizontal scroll
               overflowX: reducedMotion ? 'auto' : 'visible',
@@ -359,17 +384,35 @@ export default function WhyChooseUs() {
       </div>
 
       <style>{`
+        /* ── Card width — responsive ───────────────────────────────────
+           Desktop/tablet (>640px): 300px — 3-4 cards visible at once
+           Mobile (≤640px): 240px — ~1.3 cards at 375px width, so the
+             next card peeks in by ~80px giving the eye a reference point
+             to perceive the vertical wave offset between adjacent cards.
+           320px phone: 240px card + 20px gap = 260px, leaving 60px peek.
+        ── */
+        .approach-card {
+          width: 300px;
+        }
+        @media (max-width: 640px) {
+          .approach-card {
+            width: 240px;
+          }
+        }
+
+        /* ── Section min-height on mobile ──────────────────────────────
+           Ensure the section is tall enough to show the full wave arc
+           (card height ~220px + 2 × mobile amplitude 28px = 276px)
+           plus heading + padding. min-height: 480px is comfortable.    */
+        @media (max-width: 640px) {
+          #why-choose-us {
+            min-height: 480px;
+          }
+        }
+
         /* Dark mode: keep crimson bg as-is — it's already a dark accent */
         html.dark #why-choose-us {
           background: linear-gradient(135deg, #8a0c1c 0%, #b8102a 45%, #9e0e24 100%) !important;
-        }
-
-        /* Reduce wave amplitude on small screens via a data attribute approach */
-        @media (max-width: 640px) {
-          #why-choose-us [data-card] {
-            /* Wave amplitude is reduced by JS already; this just ensures no overflow */
-            overflow: visible;
-          }
         }
 
         /* Ensure section never causes horizontal page scroll */
