@@ -67,16 +67,19 @@ function ApproachCard({ item }) {
       }}
     >
       {IconComponent && (
-        <div style={{
-          width: '44px', height: '44px',
-          borderRadius: '50%',
-          background: 'rgba(255,255,255,0.15)',
-          border: '1px solid rgba(255,255,255,0.30)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: '1.2rem',
-        }}>
+        <div
+          className="approach-card-icon-wrap"
+          style={{
+            width: '44px', height: '44px',
+            borderRadius: '50%',
+            background: 'rgba(255,255,255,0.15)',
+            border: '1px solid rgba(255,255,255,0.30)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '1.2rem',
+          }}
+        >
           <IconComponent size={18} color="white" aria-hidden="true" />
         </div>
       )}
@@ -359,9 +362,9 @@ export default function WhyChooseUs() {
            will read against this better than white in dark mode.
         ──────────────────────────────────────────────────────────────── */
 
-        /* A. Main heading "Our Approach" — white in dark mode */
+        /* A. Main heading "Our Approach" — BLACK in dark mode */
         html.dark #why-choose-us .sh-heading {
-          color: #ffffff !important;
+          color: #111111 !important;
         }
 
         /* C. Introductory subtext — dark/near-black in dark mode */
@@ -377,6 +380,19 @@ export default function WhyChooseUs() {
         /* E. Card descriptions — dark in dark mode */
         html.dark #why-choose-us .approach-card-body {
           color: rgba(20, 20, 20, 0.88) !important;
+        }
+
+        /* F. Card icons — black in dark mode.
+           Lucide icons render as inline SVG with stroke="white" set via
+           the color prop. CSS cannot override an inline color="" prop
+           via the color property, but CAN override the SVG stroke attribute
+           using the svg stroke rule below — this is the correct technique
+           for lucide-react icons.
+           Scoped tightly to #why-choose-us .approach-card-icon-wrap so
+           it CANNOT affect icons in the navbar, footer, or any other section. */
+        html.dark #why-choose-us .approach-card-icon-wrap svg {
+          stroke: #111111 !important;
+          color: #111111 !important;
         }
 
         /* Note: .sh-label ("WHY TRAVEL WITH US") is deliberately excluded —
