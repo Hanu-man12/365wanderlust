@@ -225,8 +225,13 @@ export default function WhyChooseUs() {
           inset: 0,
           backgroundImage: 'url(/landmark-skyline.svg)',
           backgroundRepeat: 'no-repeat',
+          // 'contain' ensures the FULL panorama is always visible at any
+          // viewport size — the whole 1600×500 composition scales down
+          // proportionally to fit within the container.
+          // 'cover' caused mobile to zoom in on one fragment because the
+          // 3.2:1 aspect SVG overflowed a portrait container's width.
           backgroundPosition: 'center bottom',
-          backgroundSize: 'cover',
+          backgroundSize: 'contain',
           zIndex: 0,
           pointerEvents: 'none',
         }}

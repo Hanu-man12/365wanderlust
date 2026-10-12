@@ -1,14 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 500" preserveAspectRatio="xMidYMax meet">
   <!--
     365 WANDERLUST — Panoramic Landmark Skyline
-    Original illustration for the "Our Approach" section background.
-    8 world landmarks arranged as a continuous skyline.
-    White strokes, opacity on outer group, crimson-red background.
-    viewBox: 1600×500 — tall enough to fill section height.
-    Ground baseline: y=460. Landmarks of varying heights above it.
-    Stroke: uniform 2px weight throughout. Cap/join: round.
+    8 world landmarks as white outline silhouettes on crimson-red bg.
+    viewBox 1600×500. Ground baseline y=460.
+    Rendered via CSS background-image with background-size:contain
+    so the full composition is always visible at every screen width.
+    Stroke weight 2px, opacity 0.28 (slightly higher to stay visible at contain scale).
   -->
-  <g fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.22">
+  <g fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.28">
 
     <!--
     ═══════════════════════════════════════════════════════════
