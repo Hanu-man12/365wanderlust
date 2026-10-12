@@ -33,9 +33,11 @@ export default function Hero() {
         alignItems: 'center',
         justifyContent: 'flex-end',
         overflow: 'hidden',
-        /* Brand-red letterbox bg — visible on narrow viewports where the
-           16:9 image doesn't fill the full height in "contain" mode      */
-        background: '#0D0D0D',
+        /* Crimson brand gradient bg — replaces near-black (#0D0D0D).
+           On narrow mobile (contain mode) the image doesn't fill full
+           height so background shows as letterbox. Crimson looks
+           intentional and on-brand; black looked like a broken gap.    */
+        background: 'linear-gradient(180deg, #8a0c1c 0%, #D0112B 60%, #a50e22 100%)',
       }}
     >
       {/* ── Full-bleed banner image ── */}
@@ -174,12 +176,12 @@ export default function Hero() {
         /* ── NARROW MOBILE (portrait ≤ 480px) ──────────────────────────────
            The 16:9 image is too wide relative to portrait height.
            Use object-fit:contain so the FULL image is visible — no content
-           cropped. Near-black bg fills letterbox areas (brand-consistent).
+           cropped. Crimson gradient bg fills letterbox areas above/below.
            Hero height = natural 16:9 height of the screen width.
-           Formula: 100vw ÷ (16/9) = 56.25vw. Add 80px for CTA below.    */
+           Formula: 100vw ÷ (16/9) = 56.25vw. Add 100px for CTA below.  */
         @media (max-width: 480px) {
           .hero-section {
-            min-height: calc(56.25vw + 80px) !important;
+            min-height: calc(56.25vw + 100px) !important;
             justify-content: flex-end !important;
           }
           .hero-img {

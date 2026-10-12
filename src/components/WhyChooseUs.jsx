@@ -341,6 +341,20 @@ export default function WhyChooseUs() {
           background: linear-gradient(135deg, #8a0c1c 0%, #b8102a 45%, #9e0e24 100%) !important;
         }
 
+        /* ── Dark mode: fix heading/subtext that uses var(--color-cream) ──
+           In html.dark, --color-cream is remapped to near-black (#141414),
+           making the heading invisible on crimson. Force it back to white.
+           Exception: sh-label ("WHY TRAVEL WITH US") keeps its existing
+           golden color — do NOT include .sh-label in this rule.          */
+        html.dark #why-choose-us .sh-heading {
+          color: #ffffff !important;
+        }
+        html.dark #why-choose-us .sh-subtext {
+          color: rgba(255, 255, 255, 0.80) !important;
+        }
+        /* Card headings and descriptions are already hardcoded white/rgba-white
+           in the ApproachCard component — no override needed there.       */
+
         /* ── No horizontal scroll bleed ── */
         #why-choose-us { max-width: 100vw; }
 

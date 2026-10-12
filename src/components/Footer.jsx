@@ -5,7 +5,7 @@ import React from 'react';
 import { Phone, Mail } from 'lucide-react';
 import { FaWhatsapp, FaInstagram, FaFacebook, FaYoutube } from 'react-icons/fa';
 import { brand, contact } from '../data/siteData';
-import { getWhatsAppLink, getMailtoLink, getTelLink } from '../utils/contactLinks';
+import { getMailtoLink, getTelLink } from '../utils/contactLinks';
 
 // Footer logo — uses real image from siteData.brand.logo
 function FooterLogo() {
@@ -100,8 +100,12 @@ export default function Footer() {
 
             {/* Social icons */}
             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.2rem' }}>
-              <a href={getWhatsAppLink()} target="_blank" rel="noopener noreferrer"
-                aria-label="WhatsApp"
+              {/* WhatsApp icon → navigates to the Contact/enquiry form section.
+                  Does NOT open WhatsApp directly — that's reserved for the
+                  enquiry form's own "Send Enquiry via WhatsApp" button.       */}
+              <a
+                href="#contact"
+                aria-label="Go to trip enquiry form"
                 style={{ color: 'rgba(245,237,216,0.4)', transition: 'color 0.2s', minWidth: '40px', minHeight: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 onMouseOver={e => e.currentTarget.style.color = '#25D366'}
                 onMouseOut={e => e.currentTarget.style.color = 'rgba(245,237,216,0.4)'}
