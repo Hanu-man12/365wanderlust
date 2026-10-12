@@ -29,6 +29,10 @@ export default function About() {
       {/* Faint ornamental mandala — top-right decorative only */}
       <div aria-hidden="true" className="about-mandala" style={{
         position: 'absolute', top: '-60px', right: '-60px', opacity: 0.05, pointerEvents: 'none',
+        /* Clamp size so it never causes horizontal overflow on narrow phones */
+        width: 'min(320px, 55vw)',
+        height: 'min(320px, 55vw)',
+        overflow: 'hidden',
       }}>
         <svg width="320" height="320" viewBox="0 0 400 400">
           {[30,60,90,120,150,180].map(r => (
