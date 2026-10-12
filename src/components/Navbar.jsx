@@ -130,20 +130,34 @@ export default function Navbar() {
           top: 0, left: 0, right: 0,
           zIndex: 100,
           // ── TRANSPARENT at top → GLASS on scroll ──
-          // Dark mode glass: darker semi-opaque bg
-          // Light mode glass: near-black (crimson text stays readable)
+          //
+          // LIGHT MODE scrolled: white frosted glass
+          //   rgba(255,255,255,0.82) — milky-white, page subtly visible through
+          //   backdrop-blur gives the frosted effect
+          //   subtle bottom border + shadow for separation from content
+          //
+          // DARK MODE scrolled: dark black glass (unchanged)
+          //   rgba(8,8,8,0.78) — same as before, user confirmed this is correct
+          //
+          // Mobile open: full-opacity dark overlay (both modes — menu is dark)
           background: mobileOpen
             ? (isDark ? 'rgba(8, 8, 8, 0.98)' : 'rgba(13,13,13,0.98)')
             : isScrolled
-              ? (isDark ? 'rgba(8, 8, 8, 0.78)' : 'rgba(13, 13, 13, 0.72)')
+              ? (isDark
+                  ? 'rgba(8, 8, 8, 0.78)'           // dark mode: dark glass (unchanged)
+                  : 'rgba(255, 255, 255, 0.82)')      // light mode: WHITE frosted glass ✨
               : 'transparent',
-          backdropFilter: isScrolled && !mobileOpen ? 'blur(14px) saturate(1.4)' : 'none',
-          WebkitBackdropFilter: isScrolled && !mobileOpen ? 'blur(14px) saturate(1.4)' : 'none',
+          backdropFilter: isScrolled && !mobileOpen ? 'blur(16px) saturate(1.8)' : 'none',
+          WebkitBackdropFilter: isScrolled && !mobileOpen ? 'blur(16px) saturate(1.8)' : 'none',
           borderBottom: isScrolled && !mobileOpen
-            ? '1px solid rgba(208, 17, 43, 0.18)'
+            ? (isDark
+                ? '1px solid rgba(208, 17, 43, 0.18)'     // dark: crimson tint border
+                : '1px solid rgba(208, 17, 43, 0.12)')     // light: very subtle crimson border
             : 'none',
           boxShadow: isScrolled && !mobileOpen
-            ? '0 2px 20px rgba(0,0,0,0.25)'
+            ? (isDark
+                ? '0 2px 20px rgba(0,0,0,0.35)'           // dark: stronger shadow
+                : '0 2px 16px rgba(0,0,0,0.08)')           // light: soft shadow (white glass)
             : 'none',
           transition: 'background 0.35s ease, backdrop-filter 0.35s ease, box-shadow 0.35s ease, border-bottom 0.35s ease',
         }}
@@ -192,7 +206,7 @@ export default function Navbar() {
           <ul
             style={{
               display: 'flex',
-              gap: '0.15rem',
+              gap: '0.4rem',          // was 0.15rem — more breathing room for larger text
               listStyle: 'none',
               margin: 0, padding: 0,
               alignItems: 'center',
@@ -208,20 +222,22 @@ export default function Navbar() {
                     aria-current={isActive ? 'page' : undefined}
                     style={{
                       fontFamily: 'var(--font-sans)',
-                      fontSize: '0.82rem',
+                      fontSize: '0.93rem',        // was 0.82rem — larger, easier to read
                       fontWeight: 600,
-                      letterSpacing: '0.06em',
+                      letterSpacing: '0.04em',    // was 0.06em — tighter to avoid overflow
                       textTransform: 'uppercase',
-                      // Always crimson-red — readable against any bg via text-shadow
                       color: '#D0112B',
                       textDecoration: 'none',
-                      padding: '0.4rem 0.7rem',
+                      padding: '0.4rem 0.6rem',   // was 0.7rem — slightly less side padding
                       borderRadius: '6px',
                       transition: 'color 0.2s, opacity 0.2s',
                       position: 'relative',
                       opacity: isActive ? 1 : 0.85,
-                      // Subtle shadow so crimson stays readable on light & dark bgs
-                      textShadow: '0 1px 4px rgba(255,255,255,0.6), 0 1px 8px rgba(0,0,0,0.25)',
+                      // Text shadow adapts: light bg → dark shadow only; dark bg → both
+                      // White glass: white shadow would wash out, so use dark shadow only
+                      textShadow: isDark || !isScrolled
+                        ? '0 1px 4px rgba(255,255,255,0.5), 0 1px 8px rgba(0,0,0,0.3)'
+                        : '0 1px 4px rgba(0,0,0,0.15)',  // white glass: minimal shadow
                     }}
                     onMouseOver={e => { e.currentTarget.style.opacity = '1'; }}
                     onMouseOut={e => { e.currentTarget.style.opacity = isActive ? '1' : '0.85'; }}
@@ -231,8 +247,8 @@ export default function Navbar() {
                       <span style={{
                         position: 'absolute',
                         bottom: '2px',
-                        left: '0.7rem',
-                        right: '0.7rem',
+                        left: '0.6rem',
+                        right: '0.6rem',
                         height: '2px',
                         background: '#D0112B',
                         borderRadius: '2px',
@@ -294,9 +310,9 @@ export default function Navbar() {
             style={{
               background: 'none',
               border: 'none',
-              // White with shadow so visible on transparent navbar
-              color: 'white',
-              filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.5))',
+              // Crimson red — brand color, visible on both transparent and white-glass navbar
+              color: '#D0112B',
+              filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.25))',
               cursor: 'pointer',
               padding: '0.5rem',
               display: 'none',
