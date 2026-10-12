@@ -102,8 +102,9 @@ html.dark {
 /* ── Scroll Margin for sticky navbar ──
    Ensures anchor links (#about, #contact etc.) scroll to a position
    where the section heading is below the 72px fixed navbar.
-   Previously 72px — now 80px to give 8px breathing room above heading. */
-section[id] {
+   Previously 72px — now 80px to give 8px breathing room above heading.
+   Also targets div[id] for the hero wrapper (#home uses a div). */
+section[id], div[id] {
   scroll-margin-top: 80px;
 }
 

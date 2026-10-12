@@ -80,22 +80,28 @@ function ApproachCard({ item }) {
           <IconComponent size={18} color="white" aria-hidden="true" />
         </div>
       )}
-      <h3 style={{
-        fontFamily: 'var(--font-serif)',
-        fontSize: '1.2rem',
-        fontWeight: 700,
-        color: '#ffffff',
-        margin: '0 0 0.6rem 0',
-      }}>
+      <h3
+        className="approach-card-heading"
+        style={{
+          fontFamily: 'var(--font-serif)',
+          fontSize: '1.2rem',
+          fontWeight: 700,
+          color: '#ffffff',
+          margin: '0 0 0.6rem 0',
+        }}
+      >
         {item.title}
       </h3>
-      <p style={{
-        fontFamily: 'var(--font-sans)',
-        fontSize: '0.88rem',
-        lineHeight: 1.75,
-        color: 'rgba(255,255,255,0.82)',
-        margin: 0,
-      }}>
+      <p
+        className="approach-card-body"
+        style={{
+          fontFamily: 'var(--font-sans)',
+          fontSize: '0.88rem',
+          lineHeight: 1.75,
+          color: 'rgba(255,255,255,0.82)',
+          margin: 0,
+        }}
+      >
         {item.description}
       </p>
     </div>
@@ -341,19 +347,40 @@ export default function WhyChooseUs() {
           background: linear-gradient(135deg, #8a0c1c 0%, #b8102a 45%, #9e0e24 100%) !important;
         }
 
-        /* ── Dark mode: fix heading/subtext that uses var(--color-cream) ──
-           In html.dark, --color-cream is remapped to near-black (#141414),
-           making the heading invisible on crimson. Force it back to white.
-           Exception: sh-label ("WHY TRAVEL WITH US") keeps its existing
-           golden color — do NOT include .sh-label in this rule.          */
+        /* ── Dark mode text colours — role-based, selective ─────────────
+           The section has a crimson-red bg in BOTH light and dark modes.
+           In dark mode the user wants:
+             A. "Our Approach" heading        → white  ✓ (already set below)
+             B. "WHY TRAVEL WITH US" label    → keep existing golden (DO NOT TOUCH)
+             C. Introductory subtext          → dark / near-black
+             D. Card headings (h3)            → dark / near-black
+             E. Card descriptions (p)         → dark / near-black
+           Cards have rgba(255,255,255,0.10) translucent bg — dark text
+           will read against this better than white in dark mode.
+        ──────────────────────────────────────────────────────────────── */
+
+        /* A. Main heading "Our Approach" — white in dark mode */
         html.dark #why-choose-us .sh-heading {
           color: #ffffff !important;
         }
+
+        /* C. Introductory subtext — dark/near-black in dark mode */
         html.dark #why-choose-us .sh-subtext {
-          color: rgba(255, 255, 255, 0.80) !important;
+          color: #1a1a1a !important;
         }
-        /* Card headings and descriptions are already hardcoded white/rgba-white
-           in the ApproachCard component — no override needed there.       */
+
+        /* D. Card headings — dark in dark mode */
+        html.dark #why-choose-us .approach-card-heading {
+          color: #111111 !important;
+        }
+
+        /* E. Card descriptions — dark in dark mode */
+        html.dark #why-choose-us .approach-card-body {
+          color: rgba(20, 20, 20, 0.88) !important;
+        }
+
+        /* Note: .sh-label ("WHY TRAVEL WITH US") is deliberately excluded —
+           its golden color rgba(240,192,96,0.85) is preserved as-is.      */
 
         /* ── No horizontal scroll bleed ── */
         #why-choose-us { max-width: 100vw; }
