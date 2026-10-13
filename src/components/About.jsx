@@ -9,7 +9,7 @@ import SectionHeading from './SectionHeading';
 import Reveal from './Reveal';
 
 const PARAGRAPHS = [
-  '365 Wanderlust is a travel planning entity focused on adventure, leisure, cultural & sustainable tour plans which is led by professional tourism experts throughout the year.',
+  '365 Wanderlust is a travel planning entity focused on offbeat, adventure, leisure, cultural & sustainable tour plans which is led by professional tourism experts throughout the year.',
   'We curate top notch tour plans with efficient team effort, real time critical thinking, in-depth travel planning knowledge & joy.',
   'We are promised to deliver an unbeatable experience under ideal pricing which will be beneficial to the eco-system, local communities & to the travellers as well.',
 ];
