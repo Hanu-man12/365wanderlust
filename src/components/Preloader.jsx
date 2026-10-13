@@ -240,9 +240,7 @@ export default function Preloader({ onDone }) {
   // ══════════════════════════════════════════════
   return (
     <>
-      {/* ── LAYER 1: White preloader content panel ──
-          Fades out when sliding phase begins, revealing the
-          crimson sliding-door panel below it (layer 2).           */}
+      {/* ── LAYER 1: White preloader content panel ── */}
       <motion.div
         key="preloader-content"
         style={{
@@ -250,28 +248,56 @@ export default function Preloader({ onDone }) {
           background: BRAND_WHITE,
           display: 'flex', flexDirection: 'column',
           alignItems: 'flex-start', justifyContent: 'center',
-          // Padding: left/right large on desktop so content starts well in from edge
-          // but content itself is sized to fill the visual space
-          paddingLeft:   'clamp(2rem, 7vw, 8rem)',
-          paddingRight:  'clamp(2rem, 7vw, 8rem)',
-          paddingTop:    'clamp(2rem, 5vw, 5rem)',
-          paddingBottom: 'clamp(2rem, 5vw, 5rem)',
+          paddingLeft:   'clamp(1.5rem, 6vw, 7rem)',
+          paddingRight:  'clamp(1.5rem, 6vw, 7rem)',
+          paddingTop:    'clamp(1.5rem, 4vw, 4rem)',
+          paddingBottom: 'clamp(1.5rem, 4vw, 4rem)',
           overflow: 'hidden',
         }}
         initial={{ opacity: 1 }}
         animate={{ opacity: isSliding ? 0 : 1 }}
         transition={{ duration: 0.35, ease: 'easeIn' }}
       >
+        {/*
+          ── SIZING STRATEGY ─────────────────────────────────────────────
+          Problem: independently-scaled vw values caused total row width
+          to overflow viewport on mobile, and logo to collide with heading.
+
+          Solution: one CSS custom property --h acts as the "base unit"
+          (= heading font-size). All other sizes derive from it as fractions
+          using calc(), so they scale together:
+            Logo   = ~0.75× heading cap height ≈ 0.75 × 0.72 × --h = ~0.54×
+            Counter= ~0.70× heading size
+            Gaps   = proportional to --h so they grow/shrink with text
+
+          --h values at each breakpoint:
+            375px : clamp min = 1.6rem = 25.6px  → row ≈ 290px fits in ~310px ✓
+            768px : 5.8vw = 44.5px               → row ≈ 510px fits in ~660px ✓
+            1024px: 5.8vw = 59.4px               → row ≈ 680px fits in ~880px ✓
+            1440px: 5.8vw = 83.5px               → row ≈ 960px fits in ~1300px ✓
+            1920px: clamp max = 6rem = 96px       → row ≈ 1100px fits in ~1720px ✓
+
+          "365 Wanderlust" has 14 chars (incl space).
+          At --h=96px, avg char width ~0.55×96=52.8px → 14×52.8=739px heading
+          + logo(~52px) + counter(~67px) + gaps(~60px) = ~918px
+          Usable width at 1920px = 1920 - 2×(7rem≈112px) = 1696px → fine ✓
+
+          At --h=25.6px (375px mobile):
+          14×0.55×25.6=197px + logo(~14px) + counter(~18px) + gaps(~16px) = ~245px
+          Usable = 375 - 2×24px = 327px → fine ✓
+          ─────────────────────────────────────────────────────────────────
+        */}
+
         {/* ── Main row: Heading + Logo + Counter ── */}
         <div style={{
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'baseline',
           flexWrap: 'nowrap',
-          // Row-level gap: heading ↔ logo spacing (already good)
-          // Logo ↔ counter gap is handled separately via marginLeft on counter
-          gap: 0,
           maxWidth: '100%',
+          // CSS custom property --h as base font size for proportional scaling.
+          // All children reference it via 1em (since heading sets font-size = --h).
+          '--pl-h': 'clamp(1.6rem, 5.8vw, 6rem)',
         }}>
 
           {/* ── Heading letters ── */}
@@ -280,8 +306,9 @@ export default function Preloader({ onDone }) {
             style={{
               display: 'flex', flexDirection: 'row', alignItems: 'baseline',
               flexShrink: 1, minWidth: 0,
-              // Gap between heading group and logo
-              marginRight: 'clamp(0.5rem, 2vw, 2rem)',
+              fontSize: 'var(--pl-h)',
+              // Gap after heading group before logo: 0.35em of heading size
+              marginRight: '0.35em',
             }}
           >
             {CHARS.map((char, i) => (
@@ -292,16 +319,13 @@ export default function Preloader({ onDone }) {
                   fontFamily: "'Montserrat', sans-serif",
                   fontWeight: 800,
                   fontStyle: 'italic',
-                  // NO hard cap — let vw drive the size so it fills the screen.
-                  // min: 1.8rem (mobile), ideal: 9.5vw (scales with viewport),
-                  // max: 12rem (prevents overflow on extreme wide screens like 4K)
-                  fontSize: 'clamp(1.8rem, 9.5vw, 12rem)',
+                  fontSize: 'inherit',   // inherits --pl-h from parent div
                   lineHeight: 1,
                   color: BRAND_RED,
-                  letterSpacing: char === ' ' ? '0.2em' : '-0.02em',
+                  letterSpacing: char === ' ' ? '0.18em' : '-0.02em',
                   display: 'inline-block',
                   whiteSpace: 'pre',
-                  minWidth: char === ' ' ? '0.15em' : 'auto',
+                  minWidth: char === ' ' ? '0.18em' : 'auto',
                 }}
                 initial={{ opacity: 0, y: 22 }}
                 animate={{
@@ -327,12 +351,17 @@ export default function Preloader({ onDone }) {
             ))}
           </div>
 
-          {/* ── Logo mark ── */}
+          {/* ── Logo mark ──
+              Size = 0.72em relative to heading (72% of heading cap-height area).
+              marginRight = 0.5em gap before counter — LARGER than heading gap. */}
           <motion.div
             style={{
-              flexShrink: 0, display: 'flex', alignItems: 'center',
-              // Gap between logo and counter — larger than heading↔logo
-              marginRight: 'clamp(0.8rem, 3vw, 3.5rem)',
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              fontSize: 'var(--pl-h)',
+              // Gap BETWEEN logo and counter — deliberately larger than heading→logo
+              marginRight: '0.5em',
             }}
             initial={{ opacity: 0, scale: 0.75 }}
             animate={{
@@ -350,28 +379,30 @@ export default function Preloader({ onDone }) {
               alt=""
               aria-hidden="true"
               style={{
-                // Proportional to heading — roughly 80% of heading's cap height
-                // heading at 9.5vw cap-height ≈ 9.5vw × 0.7 = ~6.65vw
-                width:  'clamp(1.8rem, 7vw, 9rem)',
-                height: 'clamp(1.8rem, 7vw, 9rem)',
+                // 0.72em = proportional to heading, scales with it automatically
+                width:  '0.72em',
+                height: '0.72em',
                 objectFit: 'contain',
                 display: 'block',
               }}
             />
           </motion.div>
 
-          {/* ── Counter ── */}
+          {/* ── Counter ──
+              0.75em relative to heading = slightly smaller, bold, prominent.
+              No additional marginLeft needed — logo's marginRight handles gap. */}
           <motion.div
             style={{
               flexShrink: 0,
               fontFamily: "'Montserrat', sans-serif",
               fontWeight: 800,
               fontStyle:  'normal',
-              // Counter slightly smaller than heading — prominent but not equal
-              fontSize: 'clamp(1.4rem, 6.5vw, 8rem)',
+              fontSize:   'calc(var(--pl-h) * 0.75)',
               color:      BRAND_RED,
               lineHeight: 1,
               letterSpacing: '-0.03em',
+              // Shift baseline up slightly so counter aligns with heading baseline
+              alignSelf: 'baseline',
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: isLogoFading ? 0 : 1 }}
@@ -390,7 +421,8 @@ export default function Preloader({ onDone }) {
         {/* ── Tagline: "Grab Your Leisure" ── */}
         <motion.div
           style={{
-            marginTop: 'clamp(0.8rem, 2vw, 2.5rem)',
+            fontSize: 'var(--pl-h)',
+            marginTop: '0.5em',
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: isDisassembling ? 0 : 0.72 }}
@@ -403,22 +435,22 @@ export default function Preloader({ onDone }) {
           <div style={{
             fontFamily: "'DM Sans', sans-serif",
             fontWeight: 400,
-            fontSize: 'clamp(0.65rem, 1.4vw, 1.25rem)',
+            fontSize: 'clamp(0.6rem, 1.2vw, 1.1rem)',
             letterSpacing: '0.28em',
             textTransform: 'uppercase',
             color: BRAND_RED,
-            lineHeight: 1.55,
+            lineHeight: 1.6,
           }}>
             Grab Your
           </div>
           <div style={{
             fontFamily: "'DM Sans', sans-serif",
             fontWeight: 400,
-            fontSize: 'clamp(0.65rem, 1.4vw, 1.25rem)',
+            fontSize: 'clamp(0.6rem, 1.2vw, 1.1rem)',
             letterSpacing: '0.28em',
             textTransform: 'uppercase',
             color: BRAND_RED,
-            lineHeight: 1.55,
+            lineHeight: 1.6,
           }}>
             Leisure
           </div>
