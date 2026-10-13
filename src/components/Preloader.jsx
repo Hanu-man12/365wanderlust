@@ -246,11 +246,16 @@ export default function Preloader({ onDone }) {
       <motion.div
         key="preloader-content"
         style={{
-          position: 'fixed', inset: 0, zIndex: 9998,  // one below the crimson door
+          position: 'fixed', inset: 0, zIndex: 9998,
           background: BRAND_WHITE,
           display: 'flex', flexDirection: 'column',
           alignItems: 'flex-start', justifyContent: 'center',
-          padding: 'clamp(2rem, 8vw, 6rem)',
+          // Padding: left/right large on desktop so content starts well in from edge
+          // but content itself is sized to fill the visual space
+          paddingLeft:   'clamp(2rem, 7vw, 8rem)',
+          paddingRight:  'clamp(2rem, 7vw, 8rem)',
+          paddingTop:    'clamp(2rem, 5vw, 5rem)',
+          paddingBottom: 'clamp(2rem, 5vw, 5rem)',
           overflow: 'hidden',
         }}
         initial={{ opacity: 1 }}
@@ -263,8 +268,9 @@ export default function Preloader({ onDone }) {
           flexDirection: 'row',
           alignItems: 'baseline',
           flexWrap: 'nowrap',
-          // DESKTOP FIX: bigger gap between elements
-          gap: 'clamp(0.5rem, 2.5vw, 1.6rem)',
+          // Row-level gap: heading ↔ logo spacing (already good)
+          // Logo ↔ counter gap is handled separately via marginLeft on counter
+          gap: 0,
           maxWidth: '100%',
         }}>
 
@@ -274,6 +280,8 @@ export default function Preloader({ onDone }) {
             style={{
               display: 'flex', flexDirection: 'row', alignItems: 'baseline',
               flexShrink: 1, minWidth: 0,
+              // Gap between heading group and logo
+              marginRight: 'clamp(0.5rem, 2vw, 2rem)',
             }}
           >
             {CHARS.map((char, i) => (
@@ -284,14 +292,16 @@ export default function Preloader({ onDone }) {
                   fontFamily: "'Montserrat', sans-serif",
                   fontWeight: 800,
                   fontStyle: 'italic',
-                  // DESKTOP FIX: bigger max (was 5.5rem → now 6.5rem)
-                  fontSize: 'clamp(2rem, 7.5vw, 6.5rem)',
+                  // NO hard cap — let vw drive the size so it fills the screen.
+                  // min: 1.8rem (mobile), ideal: 9.5vw (scales with viewport),
+                  // max: 12rem (prevents overflow on extreme wide screens like 4K)
+                  fontSize: 'clamp(1.8rem, 9.5vw, 12rem)',
                   lineHeight: 1,
                   color: BRAND_RED,
-                  letterSpacing: char === ' ' ? '0.2em' : '-0.01em',
+                  letterSpacing: char === ' ' ? '0.2em' : '-0.02em',
                   display: 'inline-block',
                   whiteSpace: 'pre',
-                  minWidth: char === ' ' ? '0.2em' : 'auto',
+                  minWidth: char === ' ' ? '0.15em' : 'auto',
                 }}
                 initial={{ opacity: 0, y: 22 }}
                 animate={{
@@ -317,10 +327,13 @@ export default function Preloader({ onDone }) {
             ))}
           </div>
 
-          {/* ── Logo mark ──
-              DESKTOP FIX: bigger clamp max (was 3.8rem → now 5rem)     */}
+          {/* ── Logo mark ── */}
           <motion.div
-            style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}
+            style={{
+              flexShrink: 0, display: 'flex', alignItems: 'center',
+              // Gap between logo and counter — larger than heading↔logo
+              marginRight: 'clamp(0.8rem, 3vw, 3.5rem)',
+            }}
             initial={{ opacity: 0, scale: 0.75 }}
             animate={{
               opacity: isLogoFading ? 0 : 1,
@@ -337,24 +350,25 @@ export default function Preloader({ onDone }) {
               alt=""
               aria-hidden="true"
               style={{
-                // DESKTOP FIX: larger logo max size
-                width:  'clamp(2rem, 5.5vw, 5rem)',
-                height: 'clamp(2rem, 5.5vw, 5rem)',
+                // Proportional to heading — roughly 80% of heading's cap height
+                // heading at 9.5vw cap-height ≈ 9.5vw × 0.7 = ~6.65vw
+                width:  'clamp(1.8rem, 7vw, 9rem)',
+                height: 'clamp(1.8rem, 7vw, 9rem)',
                 objectFit: 'contain',
                 display: 'block',
               }}
             />
           </motion.div>
 
-          {/* ── Counter ──
-              DESKTOP FIX: larger max + bolder weight (was 3rem 700 → now 4rem 800) */}
+          {/* ── Counter ── */}
           <motion.div
             style={{
               flexShrink: 0,
               fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 800,           // bolder (was 700 DM Sans)
-              fontStyle:  'normal',      // counter stays upright (not italic)
-              fontSize:   'clamp(1.4rem, 4.5vw, 4rem)',  // bigger max
+              fontWeight: 800,
+              fontStyle:  'normal',
+              // Counter slightly smaller than heading — prominent but not equal
+              fontSize: 'clamp(1.4rem, 6.5vw, 8rem)',
               color:      BRAND_RED,
               lineHeight: 1,
               letterSpacing: '-0.03em',
@@ -373,14 +387,10 @@ export default function Preloader({ onDone }) {
           </motion.div>
         </div>
 
-        {/* ── Tagline: "Grab Your Leisure" ──────────────────────
-            FIX: parent motion.div opacity only — no competing
-            opacity on child divs (was opacity: 0.7 on children,
-            conflicting with parent animate).
-            Two lines matching the reference's caption style.       */}
+        {/* ── Tagline: "Grab Your Leisure" ── */}
         <motion.div
           style={{
-            marginTop: 'clamp(1rem, 2.5vw, 1.8rem)',
+            marginTop: 'clamp(0.8rem, 2vw, 2.5rem)',
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: isDisassembling ? 0 : 0.72 }}
@@ -393,8 +403,8 @@ export default function Preloader({ onDone }) {
           <div style={{
             fontFamily: "'DM Sans', sans-serif",
             fontWeight: 400,
-            fontSize: 'clamp(0.7rem, 1.8vw, 1.05rem)',
-            letterSpacing: '0.24em',
+            fontSize: 'clamp(0.65rem, 1.4vw, 1.25rem)',
+            letterSpacing: '0.28em',
             textTransform: 'uppercase',
             color: BRAND_RED,
             lineHeight: 1.55,
@@ -404,8 +414,8 @@ export default function Preloader({ onDone }) {
           <div style={{
             fontFamily: "'DM Sans', sans-serif",
             fontWeight: 400,
-            fontSize: 'clamp(0.7rem, 1.8vw, 1.05rem)',
-            letterSpacing: '0.24em',
+            fontSize: 'clamp(0.65rem, 1.4vw, 1.25rem)',
+            letterSpacing: '0.28em',
             textTransform: 'uppercase',
             color: BRAND_RED,
             lineHeight: 1.55,
@@ -418,7 +428,7 @@ export default function Preloader({ onDone }) {
         <motion.div
           style={{
             position: 'absolute', bottom: 0, left: 0,
-            height: '2px',
+            height: '3px',
             background: BRAND_RED,
           }}
           initial={{ width: '0%', opacity: 0.4 }}
