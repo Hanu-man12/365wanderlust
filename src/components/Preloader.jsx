@@ -493,14 +493,19 @@ export default function Preloader({ onDone }) {
             key="sliding-door"
             style={{
               position: 'fixed', inset: 0, zIndex: 9999,
-              background: BRAND_RED,           // solid, full-opacity crimson
-              transformOrigin: 'center center', // expand from middle outward
+              background: BRAND_RED,
+              transformOrigin: 'center center',
+              // No border-radius, no filter, no box-shadow — pure rectangle.
+              borderRadius: 0,
             }}
             initial={{ scaleY: 0 }}
             animate={{ scaleY: 1 }}
             transition={{
-              duration: 0.55,
-              ease: [0.22, 1, 0.36, 1],  // fast start, eases at edges
+              duration: 0.45,
+              // LINEAR easing = constant velocity = perfectly mechanical straight-edge wipe.
+              // No acceleration/deceleration = no "organic" or "bouncy" look.
+              // Game-style transitions always use linear or fast-easeIn here.
+              ease: 'linear',
             }}
           />
         )}
