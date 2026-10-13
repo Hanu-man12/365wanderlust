@@ -13,7 +13,6 @@ import Hero         from './components/Hero';
 import About        from './components/About';
 import Destinations from './components/Destinations';
 import WhyChooseUs  from './components/WhyChooseUs';
-import Gallery      from './components/Gallery';
 import Contact      from './components/Contact';
 import Footer       from './components/Footer';
 import ThemeToggle  from './components/ThemeToggle';
@@ -65,7 +64,6 @@ export default function App() {
         <About />
         <Destinations />
         <WhyChooseUs />
-        <Gallery />
         <Contact />
       </main>
 

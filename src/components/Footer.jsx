@@ -44,7 +44,6 @@ const NAV_LINKS = [
   { label: 'Home',         href: '#home'         },
   { label: 'About',        href: '#about'        },
   { label: 'Destinations', href: '#destinations' },
-  { label: 'Gallery',      href: '#gallery'      },
   { label: 'Contact',      href: '#contact'      },
 ];
 
@@ -92,7 +91,7 @@ export default function Footer() {
               marginTop: '1rem',
               maxWidth: '280px',
             }}>
-              Curated travel experiences across Rajasthan. Where every journey becomes a story worth telling.
+              Let's create your travel journeys filled with adventure, leisure, excitements under the assistance of the independent travelpreneures.
             </p>
 
             {/* Social icons */}
