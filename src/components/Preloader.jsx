@@ -267,7 +267,7 @@ export default function Preloader({ onDone }) {
         <div style={{
           display: 'flex',
           flexDirection: 'row',
-          alignItems: 'baseline',
+          alignItems: 'center',
           flexWrap: 'nowrap',
           maxWidth: '100%',
           '--pl-h': 'clamp(1.6rem, 5.8vw, 6rem)',
@@ -277,10 +277,10 @@ export default function Preloader({ onDone }) {
           <div
             role="heading" aria-level={1} aria-label={HEADING}
             style={{
-              display: 'flex', flexDirection: 'row', alignItems: 'baseline',
+              display: 'flex', flexDirection: 'row', alignItems: 'center',
               flexShrink: 1, minWidth: 0,
               fontSize: 'var(--pl-h)',
-              marginRight: '0.35em',
+              marginRight: '0.15em',
             }}
           >
             {/*
@@ -384,7 +384,7 @@ export default function Preloader({ onDone }) {
               display: 'flex',
               alignItems: 'center',
               fontSize: 'var(--pl-h)',
-              marginLeft: '0.35em',
+              marginLeft: '0.15em',
             }}
             initial={{ opacity: 0, scale: 0.75 }}
             animate={{
@@ -402,8 +402,8 @@ export default function Preloader({ onDone }) {
               alt=""
               aria-hidden="true"
               style={{
-                width:  '1em',
-                height: '1em',
+                width:  '1.15em',
+                height: '1.15em',
                 objectFit: 'contain',
                 display: 'block',
               }}
