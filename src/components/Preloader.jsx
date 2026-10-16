@@ -215,7 +215,7 @@ export default function Preloader({ onDone }) {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <img src={brand.logo} alt="" aria-hidden="true"
-            style={{ width: 48, height: 48, objectFit: 'contain' }} />
+            style={{ width: 64, height: 64, objectFit: 'contain' }} />
           <span style={{
             fontFamily: "'Montserrat', sans-serif",
             fontWeight: 800, fontStyle: 'italic',
@@ -402,8 +402,8 @@ export default function Preloader({ onDone }) {
               alt=""
               aria-hidden="true"
               style={{
-                width:  '0.72em',
-                height: '0.72em',
+                width:  '1em',
+                height: '1em',
                 objectFit: 'contain',
                 display: 'block',
               }}
@@ -558,7 +558,7 @@ export default function Preloader({ onDone }) {
           animate={{ y: '100%' }}
           transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
         />
-      )}
+      )} 
     </>
   );
 }
