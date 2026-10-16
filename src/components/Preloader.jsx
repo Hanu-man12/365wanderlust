@@ -1,40 +1,42 @@
 // ============================================================
-//  Preloader — 365 Wanderlust branded launch animation  (v2)
+//  Preloader — 365 Wanderlust branded launch animation  (v3)
 //
-//  Fixes applied vs v1:
-//  1. Tagline "Grab Your Leisure" — was invisible due to opacity
-//     conflict on parent/child elements. Fixed: opacity on motion
-//     wrapper only, children inherit correctly.
-//  2. Sliding-door reveal — was instant flash. Fixed: separate
-//     motion.div crimson panel animates scaleY 0→1 (transform-origin
-//     center), then preloader wrapper fades out on top of it.
-//  3. Color — was light pink because opacity was animating to 0
-//     on top of the crimson bg, making it translucent over white.
-//     Fixed: crimson panel is a separate opaque full-cover div.
-//  4. Desktop sizing — heading/logo/counter row was cramped.
-//     Fixed: larger clamp maxes, bigger gap, bolder counter.
+//  Refinements applied vs v2:
+//  1. CRIMSON FLASH REMOVED — onDone() is now called via
+//     onAnimationComplete on the door-open animation, no setTimeout.
+//  2. Z-SHAPED INTERLOCKING DOOR EDGES — two clip-path panels
+//     (top + bottom) with a matching zigzag seam that interlock
+//     when closed, then slide apart (top up, bottom down) to
+//     reveal the already-mounted site beneath.
+//  3. "365" IN HEADING IS THE COUNTER — the separate counter
+//     element is removed. The "365" part of the heading itself
+//     counts from 1 → 365, tied to real page readiness.
+//     tabular-nums + min-width prevents layout shift.
+//  4. LOGO IMPORT — now uses brand.logo from siteData (same
+//     source as Navbar), not a local direct asset import.
 //
 //  Sequence:
-//  1. White bg. "365 Wanderlust" [logo] [counter] build in.
+//  1. White bg. "[1→365] Wanderlust" + logo build in.
 //     "Grab Your Leisure" caption appears beneath.
-//     Counter counts 0→100 tied to real page readiness.
-//  2. Counter hits 100 → 600ms hold.
+//     "365" counts up tied to real page readiness.
+//  2. Counter hits 365 → 650ms hold.
 //  3. Letters disassemble scattered. Caption fades. Logo fades.
 //  4. Brief blank white pause.
-//  5. SLIDING DOOR: thin crimson strip at center expands
-//     vertically (scaleY 0→1, transform-origin center) to fill screen.
-//  6. Once crimson fills screen → preloader unmounts, real site shows.
+//  5. TWO DOOR PANELS: crimson top panel slides UP, bottom panel
+//     slides DOWN simultaneously, revealing the real site.
+//  6. onAnimationComplete fires → onDone() → preloader unmounts.
+//     No extra crimson flash — site was already rendered beneath.
 //
 //  Loading sync: window 'load' + MIN_DISPLAY minimum + MAX_WAIT safeguard.
 //  Reduced-motion: simple branded fade.
 // ============================================================
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import logoMark from '../assets/brand/logo-mark.png';
+import { motion } from 'motion/react';
+import { brand } from '../data/siteData';
 
 // ── Brand constants ────────────────────────────────────────────
-const BRAND_RED   = '#D0112B';  // #D0112B — same token used site-wide
+const BRAND_RED   = '#D0112B';
 const BRAND_WHITE = '#ffffff';
 
 // ── Timing ────────────────────────────────────────────────────
@@ -54,7 +56,6 @@ const EXIT_DELAYS  = CHARS.map((_, i) => {
 const MAX_EXIT_DELAY = Math.max(...EXIT_DELAYS);
 
 // ── useLoadingProgress hook ────────────────────────────────────
-// Ties counter to real page readiness. Unchanged from v1 (confirmed working).
 function useLoadingProgress(onComplete) {
   const [progress, setProgress]  = useState(0);
   const resolvedRef   = useRef(false);
@@ -164,15 +165,10 @@ export default function Preloader({ onDone }) {
     return () => clearTimeout(t);
   }, [phase, advancePhase]);
 
-  // sliding → done  (sliding door expands 600ms + brief hold 200ms)
-  useEffect(() => {
-    if (phase !== 'sliding') return;
-    const t = setTimeout(() => {
-      advancePhase('done');
-      onDone();
-    }, 900); // door expand 600ms + 300ms before unmount
-    return () => clearTimeout(t);
-  }, [phase, advancePhase, onDone]);
+  // NOTE: sliding → done is now handled by onAnimationComplete on
+  // the door panels (see JSX below). No setTimeout here — this
+  // removes the ~300ms crimson flash that was caused by the old
+  // setTimeout(onDone, 900) firing AFTER the door animation finished.
 
   // Lock scroll + pointer events while preloader is active
   useEffect(() => {
@@ -189,6 +185,9 @@ export default function Preloader({ onDone }) {
   const isLogoFading    = phase === 'logoFading'    || phase === 'sliding';
   const isSliding       = phase === 'sliding';
 
+  // ── Counter value: progress 0→100 maps to display 1→365 ──
+  const counterValue = Math.round(1 + (Math.min(progress, 100) / 100) * 364);
+
   // ══════════════════════════════════════════════
   //  REDUCED-MOTION: simple branded fade
   // ══════════════════════════════════════════════
@@ -199,6 +198,12 @@ export default function Preloader({ onDone }) {
         initial={{ opacity: 1 }}
         animate={{ opacity: isSliding ? 0 : 1 }}
         transition={{ duration: 0.6 }}
+        onAnimationComplete={() => {
+          if (isSliding) {
+            advancePhase('done');
+            onDone();
+          }
+        }}
         style={{
           position: 'fixed', inset: 0, zIndex: 9999,
           background: isSliding ? BRAND_RED : BRAND_WHITE,
@@ -209,7 +214,7 @@ export default function Preloader({ onDone }) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <img src={logoMark} alt="" aria-hidden="true"
+          <img src={brand.logo} alt="" aria-hidden="true"
             style={{ width: 48, height: 48, objectFit: 'contain' }} />
           <span style={{
             fontFamily: "'Montserrat', sans-serif",
@@ -258,110 +263,128 @@ export default function Preloader({ onDone }) {
         animate={{ opacity: isSliding ? 0 : 1 }}
         transition={{ duration: 0.35, ease: 'easeIn' }}
       >
-        {/*
-          ── SIZING STRATEGY ─────────────────────────────────────────────
-          Problem: independently-scaled vw values caused total row width
-          to overflow viewport on mobile, and logo to collide with heading.
-
-          Solution: one CSS custom property --h acts as the "base unit"
-          (= heading font-size). All other sizes derive from it as fractions
-          using calc(), so they scale together:
-            Logo   = ~0.75× heading cap height ≈ 0.75 × 0.72 × --h = ~0.54×
-            Counter= ~0.70× heading size
-            Gaps   = proportional to --h so they grow/shrink with text
-
-          --h values at each breakpoint:
-            375px : clamp min = 1.6rem = 25.6px  → row ≈ 290px fits in ~310px ✓
-            768px : 5.8vw = 44.5px               → row ≈ 510px fits in ~660px ✓
-            1024px: 5.8vw = 59.4px               → row ≈ 680px fits in ~880px ✓
-            1440px: 5.8vw = 83.5px               → row ≈ 960px fits in ~1300px ✓
-            1920px: clamp max = 6rem = 96px       → row ≈ 1100px fits in ~1720px ✓
-
-          "365 Wanderlust" has 14 chars (incl space).
-          At --h=96px, avg char width ~0.55×96=52.8px → 14×52.8=739px heading
-          + logo(~52px) + counter(~67px) + gaps(~60px) = ~918px
-          Usable width at 1920px = 1920 - 2×(7rem≈112px) = 1696px → fine ✓
-
-          At --h=25.6px (375px mobile):
-          14×0.55×25.6=197px + logo(~14px) + counter(~18px) + gaps(~16px) = ~245px
-          Usable = 375 - 2×24px = 327px → fine ✓
-          ─────────────────────────────────────────────────────────────────
-        */}
-
-        {/* ── Main row: Heading + Logo + Counter ── */}
+        {/* ── Main row: Heading (with animated counter) + Logo ── */}
         <div style={{
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'baseline',
           flexWrap: 'nowrap',
           maxWidth: '100%',
-          // CSS custom property --h as base font size for proportional scaling.
-          // All children reference it via 1em (since heading sets font-size = --h).
           '--pl-h': 'clamp(1.6rem, 5.8vw, 6rem)',
         }}>
 
-          {/* ── Heading letters ── */}
+          {/* ── Heading: [animated 365] + [ Wanderlust chars] ── */}
           <div
             role="heading" aria-level={1} aria-label={HEADING}
             style={{
               display: 'flex', flexDirection: 'row', alignItems: 'baseline',
               flexShrink: 1, minWidth: 0,
               fontSize: 'var(--pl-h)',
-              // Gap after heading group before logo: 0.35em of heading size
               marginRight: '0.35em',
             }}
           >
-            {CHARS.map((char, i) => (
-              <motion.span
-                key={i}
-                aria-hidden="true"
-                style={{
-                  fontFamily: "'Montserrat', sans-serif",
-                  fontWeight: 800,
-                  fontStyle: 'italic',
-                  fontSize: 'inherit',   // inherits --pl-h from parent div
-                  lineHeight: 1,
-                  color: BRAND_RED,
-                  letterSpacing: char === ' ' ? '0.18em' : '-0.02em',
-                  display: 'inline-block',
-                  whiteSpace: 'pre',
-                  minWidth: char === ' ' ? '0.18em' : 'auto',
-                }}
-                initial={{ opacity: 0, y: 22 }}
-                animate={{
-                  opacity: isDisassembling ? 0 : 1,
-                  y:       isDisassembling ? -20 : 0,
-                  scale:   isDisassembling ? 0.82 : 1,
-                }}
-                transition={
-                  isDisassembling
-                    ? {
-                        opacity: { duration: 0.28, delay: EXIT_DELAYS[i] },
-                        y:       { duration: 0.28, delay: EXIT_DELAYS[i] },
-                        scale:   { duration: 0.28, delay: EXIT_DELAYS[i] },
-                      }
-                    : {
-                        opacity: { duration: 0.45, delay: 0.05 + i * 0.035 },
-                        y:       { duration: 0.45, delay: 0.05 + i * 0.035, ease: [0.22, 1, 0.36, 1] },
-                      }
-                }
-              >
-                {char}
-              </motion.span>
-            ))}
+            {/*
+              ── ANIMATED COUNTER REPLACING "365" CHARS ──────────────────
+              Replaces individual char spans for indices 0,1,2 ('3','6','5').
+              - tabular-nums: prevents layout shift as digit count changes
+              - minWidth: '2.2ch' holds space for 3 digits so " Wanderlust"
+                doesn't jump sideways during 1→9 (1 digit) → 10→99 (2 digits)
+                → 100→365 (3 digits)
+              - Uses EXIT_DELAYS[0] for the exit scatter (earliest exit)
+              - Same font, color, style, size as the rest of the heading
+              ─────────────────────────────────────────────────────────────
+            */}
+            <motion.span
+              key="counter"
+              aria-hidden="true"
+              style={{
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: 800,
+                fontStyle: 'italic',
+                fontSize: 'inherit',
+                lineHeight: 1,
+                color: BRAND_RED,
+                letterSpacing: '-0.02em',
+                display: 'inline-block',
+                minWidth: '2.2ch',
+                fontVariantNumeric: 'tabular-nums',
+              }}
+              initial={{ opacity: 0, y: 22 }}
+              animate={{
+                opacity: isDisassembling ? 0 : 1,
+                y:       isDisassembling ? -20 : 0,
+                scale:   isDisassembling ? 0.82 : 1,
+              }}
+              transition={
+                isDisassembling
+                  ? {
+                      opacity: { duration: 0.28, delay: EXIT_DELAYS[0] },
+                      y:       { duration: 0.28, delay: EXIT_DELAYS[0] },
+                      scale:   { duration: 0.28, delay: EXIT_DELAYS[0] },
+                    }
+                  : {
+                      opacity: { duration: 0.45, delay: 0.05 },
+                      y:       { duration: 0.45, delay: 0.05, ease: [0.22, 1, 0.36, 1] },
+                    }
+              }
+            >
+              {counterValue}
+            </motion.span>
+
+            {/* ── " Wanderlust" chars (CHARS[3..13], i.e. space + W-a-n-d-e-r-l-u-s-t) ── */}
+            {CHARS.slice(3).map((char, relIdx) => {
+              const i = relIdx + 3; // original index in CHARS / EXIT_DELAYS
+              return (
+                <motion.span
+                  key={i}
+                  aria-hidden="true"
+                  style={{
+                    fontFamily: "'Montserrat', sans-serif",
+                    fontWeight: 800,
+                    fontStyle: 'italic',
+                    fontSize: 'inherit',
+                    lineHeight: 1,
+                    color: BRAND_RED,
+                    letterSpacing: char === ' ' ? '0.18em' : '-0.02em',
+                    display: 'inline-block',
+                    whiteSpace: 'pre',
+                    minWidth: char === ' ' ? '0.18em' : 'auto',
+                  }}
+                  initial={{ opacity: 0, y: 22 }}
+                  animate={{
+                    opacity: isDisassembling ? 0 : 1,
+                    y:       isDisassembling ? -20 : 0,
+                    scale:   isDisassembling ? 0.82 : 1,
+                  }}
+                  transition={
+                    isDisassembling
+                      ? {
+                          opacity: { duration: 0.28, delay: EXIT_DELAYS[i] },
+                          y:       { duration: 0.28, delay: EXIT_DELAYS[i] },
+                          scale:   { duration: 0.28, delay: EXIT_DELAYS[i] },
+                        }
+                      : {
+                          opacity: { duration: 0.45, delay: 0.05 + i * 0.035 },
+                          y:       { duration: 0.45, delay: 0.05 + i * 0.035, ease: [0.22, 1, 0.36, 1] },
+                        }
+                  }
+                >
+                  {char}
+                </motion.span>
+              );
+            })}
           </div>
 
           {/* ── Logo mark ──
-              Size = 0.72em relative to heading (72% of heading cap-height area).
-              marginRight = 0.5em gap before counter — LARGER than heading gap. */}
+              Same asset as Navbar (brand.logo from siteData).
+              marginLeft provides gap from heading text. */}
           <motion.div
             style={{
               flexShrink: 0,
               display: 'flex',
               alignItems: 'center',
               fontSize: 'var(--pl-h)',
-              // Gap BETWEEN logo and counter — deliberately larger than heading→logo
-              marginRight: '0.5em',
+              marginLeft: '0.35em',
             }}
             initial={{ opacity: 0, scale: 0.75 }}
             animate={{
@@ -375,46 +398,16 @@ export default function Preloader({ onDone }) {
             }
           >
             <img
-              src={logoMark}
+              src={brand.logo}
               alt=""
               aria-hidden="true"
               style={{
-                // 0.72em = proportional to heading, scales with it automatically
                 width:  '0.72em',
                 height: '0.72em',
                 objectFit: 'contain',
                 display: 'block',
               }}
             />
-          </motion.div>
-
-          {/* ── Counter ──
-              0.75em relative to heading = slightly smaller, bold, prominent.
-              No additional marginLeft needed — logo's marginRight handles gap. */}
-          <motion.div
-            style={{
-              flexShrink: 0,
-              fontFamily: "'Montserrat', sans-serif",
-              fontWeight: 800,
-              fontStyle:  'normal',
-              fontSize:   'calc(var(--pl-h) * 0.75)',
-              color:      BRAND_RED,
-              lineHeight: 1,
-              letterSpacing: '-0.03em',
-              // Shift baseline up slightly so counter aligns with heading baseline
-              alignSelf: 'baseline',
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: isLogoFading ? 0 : 1 }}
-            transition={
-              isLogoFading
-                ? { duration: 0.35, delay: 0.05 }
-                : { duration: 0.4, delay: 0.32 }
-            }
-            aria-live="polite"
-            aria-label={`Loading ${progress} percent`}
-          >
-            {String(progress).padStart(2, '0')}
           </motion.div>
         </div>
 
@@ -475,41 +468,97 @@ export default function Preloader({ onDone }) {
         />
       </motion.div>
 
-      {/* ── LAYER 2: Crimson sliding-door panel ──────────────────
-          Sits at z-index 9999 (above the white content panel).
-          Starts as a thin horizontal strip at the vertical center
-          and expands to fill the full screen vertically.
+      {/*
+        ── LAYER 2: Z-SHAPED INTERLOCKING DOOR PANELS ────────────────────
+        Two crimson panels that interlock along a zigzag seam at the
+        vertical center of the screen. When closed (phase !== 'sliding')
+        they cover the entire viewport with no gap. When isSliding fires,
+        the top panel translates -100% (up) and the bottom panel +100%
+        (down) simultaneously, revealing the already-mounted site beneath.
 
-          Technique:
-          - Full-width, full-height div with background BRAND_RED
-          - scaleY starts at 0, animates to 1
-          - transformOrigin: 'center' → expands both up AND down
-            simultaneously from the center seam (sliding-door effect)
-          - Only mounts/starts when phase === 'sliding'
-          ────────────────────────────────────────────────────────*/}
-      <AnimatePresence>
-        {isSliding && (
-          <motion.div
-            key="sliding-door"
-            style={{
-              position: 'fixed', inset: 0, zIndex: 9999,
-              background: BRAND_RED,
-              transformOrigin: 'center center',
-              // No border-radius, no filter, no box-shadow — pure rectangle.
-              borderRadius: 0,
-            }}
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            transition={{
-              duration: 0.45,
-              // LINEAR easing = constant velocity = perfectly mechanical straight-edge wipe.
-              // No acceleration/deceleration = no "organic" or "bouncy" look.
-              // Game-style transitions always use linear or fast-easeIn here.
-              ease: 'linear',
-            }}
-          />
-        )}
-      </AnimatePresence>
+        CLIP-PATH GEOMETRY:
+        ─────────────────────────────────────────────────────────────────
+        Top panel — covers the upper half with a zigzag BOTTOM edge:
+          polygon(
+            0% 0%,      ← top-left corner
+            100% 0%,    ← top-right corner
+            100% 55%,   ← bottom-right starts at 55% height (below center)
+            60% 45%,    ← steps up to 45% at 60% width
+            40% 55%,    ← steps down to 55% at 40% width (Z middle step)
+            0% 45%      ← bottom-left ends at 45% height (above center)
+          )
+
+        Bottom panel — covers the lower half with a zigzag TOP edge that
+        is a PERFECT COMPLEMENT of the top panel bottom edge:
+          polygon(
+            0% 45%,     ← top-left starts at 45% (same as top panel left)
+            40% 55%,    ← steps down to 55% at 40% width
+            60% 45%,    ← steps up to 45% at 60% width
+            100% 55%,   ← top-right at 55% (same as top panel right)
+            100% 100%,  ← bottom-right corner
+            0% 100%     ← bottom-left corner
+          )
+
+        The seam reads as:
+          Left edge:  45% — steps to 55% — steps back to 45% — Right: 55%
+          This creates a Z-shape rotated 90°, like a bolt/gate panel edge.
+
+        Both panels use the full viewport (position:fixed, inset:0) as
+        their coordinate space. The polygon percentages are viewport-
+        relative so the geometry holds correctly at every screen size
+        with no overflow or gap on resize.
+
+        WHY NOT ANIMATE clip-path: The clip-path stays constant; only
+        translateY is animated. This avoids the "same point count" motion
+        interpolation requirement and gives a cleaner mechanical slide.
+        ─────────────────────────────────────────────────────────────────
+      */}
+
+      {/* TOP DOOR PANEL — slides up */}
+      {isSliding && (
+        <motion.div
+          key="door-top"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: BRAND_RED,
+            clipPath: 'polygon(0% 0%, 100% 0%, 100% 55%, 60% 45%, 40% 55%, 0% 45%)',
+            willChange: 'transform',
+          }}
+          initial={{ y: 0 }}
+          animate={{ y: '-100%' }}
+          transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
+          onAnimationComplete={() => {
+            // Fire onDone once both panels are off-screen.
+            // Both panels have identical duration/easing, so top panel
+            // completing = both panels done. Guard against double-fire
+            // with phaseRef.
+            if (phaseRef.current === 'sliding') {
+              advancePhase('done');
+              onDone();
+            }
+          }}
+        />
+      )}
+
+      {/* BOTTOM DOOR PANEL — slides down */}
+      {isSliding && (
+        <motion.div
+          key="door-bottom"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            background: BRAND_RED,
+            clipPath: 'polygon(0% 45%, 40% 55%, 60% 45%, 100% 55%, 100% 100%, 0% 100%)',
+            willChange: 'transform',
+          }}
+          initial={{ y: 0 }}
+          animate={{ y: '100%' }}
+          transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
+        />
+      )}
     </>
   );
 }
