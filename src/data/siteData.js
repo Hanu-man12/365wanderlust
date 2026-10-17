@@ -160,15 +160,15 @@ export const destinations = [
 
 // ── Explore India ─────────────────────────────────────────────
 export const exploreIndia = [
-  { id: 'bengal',          name: 'Bengal',           status: 'available',    image: '/destinations/bengal.jpg',            tagline: 'Land of Culture & Rivers' },
-  { id: 'rajasthan',       name: 'Rajasthan',         status: 'available',    image: '/destinations/rajasthan.jpg',         tagline: 'Royal Deserts & Palaces' },
-  { id: 'bihar',           name: 'Bihar',             status: 'coming-soon',  image: '/destinations/bihar.jpg',             tagline: 'Ancient Civilisations' },
-  { id: 'himachal',        name: 'Himachal Pradesh',  status: 'coming-soon',  image: '/destinations/himachal-pradesh.jpg',  tagline: 'Mountains & Pine Forests' },
-  { id: 'uttarakhand',     name: 'Uttarakhand',       status: 'coming-soon',  image: '/destinations/uttarakhand.jpg',       tagline: 'Abode of the Gods' },
-  { id: 'odisha',          name: 'Odisha',            status: 'coming-soon',  image: '/destinations/odisha.jpg',            tagline: 'Temples & Tribal Heritage' },
-  { id: 'south-india',     name: 'South India',       status: 'coming-soon',  image: '/destinations/south-india.jpg',       tagline: 'Backwaters & Temples' },
-  { id: 'north-east',      name: 'North East India',  status: 'coming-soon',  image: '/destinations/north-east-india.jpg',  tagline: 'Mystic Valleys & Tea Gardens' },
-  { id: 'south-east-asia', name: 'South East Asia',   status: 'coming-soon',  image: '/destinations/south-east-asia.jpg',   tagline: 'Exotic Shores & Temples' },
+  { id: 'bengal',          name: 'Bengal',           status: 'available',    image: '/destinations/bengal.jpg',              tagline: 'Land of Culture & Rivers' },
+  { id: 'rajasthan',       name: 'Rajasthan',         status: 'available',    image: '/destinations/rajasthan.jpg',           tagline: 'Royal Deserts & Palaces' },
+  { id: 'bihar',           name: 'Bihar',             status: 'coming-soon',  image: '/destinations/bihar.jpeg',              tagline: 'Ancient Civilisations' },
+  { id: 'himachal',        name: 'Himachal Pradesh',  status: 'coming-soon',  image: '/destinations/himachal-pradesh.jpeg',   tagline: 'Mountains & Pine Forests' },
+  { id: 'uttarakhand',     name: 'Uttarakhand',       status: 'coming-soon',  image: '/destinations/uttarakhand.jpeg',        tagline: 'Abode of the Gods' },
+  { id: 'odisha',          name: 'Odisha',            status: 'coming-soon',  image: '/destinations/odisha.jpeg',             tagline: 'Temples & Tribal Heritage' },
+  { id: 'south-india',     name: 'South India',       status: 'coming-soon',  image: '/destinations/south-india.jpeg',        tagline: 'Backwaters & Temples' },
+  { id: 'north-east',      name: 'North East India',  status: 'coming-soon',  image: '/destinations/north-east-india.jpeg',   tagline: 'Mystic Valleys & Tea Gardens' },
+  { id: 'south-east-asia', name: 'South East Asia',   status: 'coming-soon',  image: '/destinations/south-east-asia.jpeg',    tagline: 'Exotic Shores & Temples' },
 ];
 
 // ── Travel Packages ──────────────────────────────────────────
