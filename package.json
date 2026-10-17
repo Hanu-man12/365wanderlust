@@ -14,7 +14,8 @@
     "motion": "14.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-icons": "^5.7.0"
+    "react-icons": "^5.7.0",
+    "vivus": "^0.4.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

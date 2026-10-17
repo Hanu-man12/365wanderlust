@@ -1,0 +1,9 @@
+{
+  "verdict": "APPROVED",
+  "findings": [
+    "`zIndex` not animatable in motion/react — `zIndex` inside the `animate` prop snaps rather than tweens, so cards may briefly appear in the wrong stack order while the spring transition is in flight. Move `zIndex` out of `animate` and into the `style` prop (derived from `activeIndex` at render time) for immediate, reliable z-ordering. Confirmed — DestCard animate prop.",
+    "Dead reduced-motion branch in `DestCard` — The main fan path always passes `reducedMotion={false}` to `DestCard`, so the card-level branch that sets only `opacity` (and drops `rotate`/`x`/`scale`) is unreachable. If that branch were ever reached, all nine cards would stack at `rotate(0) translateX(0)` with no positional separation. The parent's early-return fallback handles reduced-motion correctly, but the dead branch in `DestCard` is a latent stacking bug. Confirmed.",
+    "Bengal anchor scrolls to Rajasthan content — `#bengal-destinations` is placed above the Rajasthan city cards (Jaipur, Jodhpur, Udaipur, Pushkar, Thar). The Bengal info panel's 'Scroll to details ↓' link currently takes users to that Rajasthan list, not Bengal content. Until Bengal content is added, the UX is misleading. Confirm with owner whether to hide the scroll link until Bengal content is live. Likely."
+  ],
+  "reviewDoc": "d:\\365wanderlast\\.agents\\tasks\\2026-10-17-203859-review.md"
+}
