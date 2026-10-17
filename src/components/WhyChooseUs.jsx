@@ -1,14 +1,14 @@
 // ============================================================
-//  Why Choose Us — "Our Approach" section  (v6)
+//  Why Choose Us — "Our Approach" section  (v7)
 //
-//  v6 changes (this pass):
-//  - Background: replaced inline SVG + Vivus with the actual
-//    travel line-art PNG (/our-approach-travel-lineart.png).
-//    PNG is a flattened raster — Vivus cannot animate individual
-//    lines of a PNG, so it is not used here. Vivus import removed.
-//  - Animation: `motion` fade-in on the PNG layer when section
-//    enters viewport (once, via whileInView). Clean, performant.
-//  - All carousel, wave, card, and touch/mouse logic unchanged.
+//  v7 changes:
+//  - Card loop direction fixed: LEFT → RIGHT (conveyor belt).
+//    Cards enter from the left edge, travel right, exit right.
+//  - Seamless loop: track starts at -setWidth (off-screen left),
+//    advances +SPEED per frame, resets to -setWidth once it
+//    reaches 0 — no visible jump because duplicate set fills gap.
+//  - Wave sine animation preserved, direction-corrected.
+//  - All other styling, dark-mode, bg PNG, touch handlers intact.
 // ============================================================
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Compass, Heart, Users, MapPin, Star, Shield } from 'lucide-react';
@@ -21,22 +21,15 @@ const ICON_MAP = { Compass, Heart, Users, MapPin, Star, Shield };
 
 // ── Card sizing ────────────────────────────────────────────────
 const CARD_WIDTH_DESKTOP = 300;
-const CARD_WIDTH_MOBILE  = 240;
-const CARD_GAP           = 20;   // desktop gap; mobile uses 14px via CSS
+const CARD_GAP           = 20;
 
-// ── Wave amplitude (v4) ────────────────────────────────────────
-// BEFORE this pass: desktop=42, tablet=32, mobile=28
-// AFTER  this pass: desktop=55, tablet=42, mobile=36
-// Peak-to-trough (2×amp): desktop 110px, tablet 84px, mobile 72px
-// These values make the sine curve unmistakeable at every size.
+// ── Wave amplitude ─────────────────────────────────────────────
 const WAVE_AMPLITUDE_DESKTOP = 55;
 const WAVE_AMPLITUDE_TABLET  = 42;
 const WAVE_AMPLITUDE_MOBILE  = 36;
-
-// WAVE_PERIOD: px per full sine cycle — unchanged.
 const WAVE_PERIOD = 600;
 
-// SPEED: px per rAF frame — unchanged.
+// ── Speed (px per rAF frame) ───────────────────────────────────
 const SPEED = 0.8;
 
 // ── Card component (unchanged from v3) ────────────────────────
@@ -115,9 +108,15 @@ function ApproachCard({ item }) {
 export default function WhyChooseUs() {
   const trackRef    = useRef(null);
   const pausedRef   = useRef(false);
-  const posRef      = useRef(0);
+  // Start fully off-screen to the LEFT so cards enter from left edge
+  const posRef      = useRef(0); // will be set to -setWidth on first render
   const rafRef      = useRef(null);
   const resumeTimer = useRef(null);
+
+  // Initialise posRef to -setWidth once we know the card count
+  // (done here so it's ready before the first rAF frame fires)
+  const setWidthEarly = whyChooseUs.length * (CARD_WIDTH_DESKTOP + CARD_GAP);
+  if (posRef.current === 0) posRef.current = -setWidthEarly;
 
   const prefersReduced = useReducedMotion();
 
@@ -125,6 +124,13 @@ export default function WhyChooseUs() {
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
 
+  // ── One set width = 6 cards × (card + gap) ─────────────────────
+  // The track has TWO sets rendered side by side.
+  // posRef starts at -setWidth (entire first set off-screen LEFT).
+  // Each frame we ADD +SPEED (moves right).
+  // When posRef reaches 0, one full set has passed → reset to -setWidth.
+  // Because the second set is visually identical to the first,
+  // the reset is invisible — seamless conveyor belt, left → right.
   const setWidth = whyChooseUs.length * (CARD_WIDTH_DESKTOP + CARD_GAP);
 
   // Three-tier amplitude lookup
@@ -138,15 +144,17 @@ export default function WhyChooseUs() {
   const animate = useCallback(() => {
     if (!trackRef.current) return;
     if (!pausedRef.current) {
-      posRef.current -= SPEED;
-      if (Math.abs(posRef.current) >= setWidth) posRef.current = 0;
+      // Move RIGHT (+SPEED). Reset after one full set has exited right.
+      posRef.current += SPEED;
+      if (posRef.current >= 0) posRef.current = -setWidth;
       trackRef.current.style.transform = `translateX(${posRef.current}px)`;
 
+      // Wave sine — phase advances with position (now positive direction)
       const amp = getAmplitude();
       const allCards = trackRef.current.querySelectorAll('[data-card]');
       allCards.forEach((card, i) => {
         const phaseOffset = (2 * Math.PI / whyChooseUs.length) * (i % whyChooseUs.length);
-        const t = (-posRef.current / WAVE_PERIOD) * 2 * Math.PI;
+        const t = (posRef.current / WAVE_PERIOD) * 2 * Math.PI;
         card.style.transform = `translateY(${amp * Math.sin(t + phaseOffset)}px)`;
       });
     }
@@ -177,7 +185,8 @@ export default function WhyChooseUs() {
   };
   const handleTouchMove = (e) => {
     if (touchStartX.current === null || !trackRef.current) return;
-    posRef.current = touchStartPos.current + (e.touches[0].clientX - touchStartX.current);
+    const newPos = touchStartPos.current + (e.touches[0].clientX - touchStartX.current);
+    posRef.current = newPos;
     trackRef.current.style.transform = `translateX(${posRef.current}px)`;
   };
   const handleTouchEnd = () => {
@@ -208,26 +217,7 @@ export default function WhyChooseUs() {
         overflow: 'hidden',
       }}
     >
-      {/*
-        ── PNG BACKGROUND ILLUSTRATION ─────────────────────────────
-        /our-approach-travel-lineart.png — white travel line-art on
-        transparent background, sits on crimson-red section gradient.
-
-        Sizing strategy:
-        - background-size: cover  → fills the section completely at
-          every breakpoint; the wide panoramic composition means the
-          full width is always used and only minimal top/bottom is
-          trimmed on very tall viewports.
-        - background-position: center center → keeps the composition
-          centered so landmarks on left, center, and right are all
-          visible.
-        - opacity: 0.18 → illustration is clearly readable without
-          overwhelming the card content above it.
-
-        motion fade-in: whileInView opacity 0→0.18, once only.
-        Reduced-motion: skip transition, appear at full opacity immediately.
-        pointer-events:none → never blocks carousel.
-      ──────────────────────────────────────────────────────────── */}
+      {/* ── PNG background illustration ── */}
       <motion.div
         aria-hidden="true"
         initial={{ opacity: 0 }}
@@ -287,7 +277,11 @@ export default function WhyChooseUs() {
             pointerEvents: 'none',
           }} />
 
-          {/* Scrolling track */}
+          {/* Scrolling track — two identical sets side by side.
+              posRef starts at -setWidth (set1 off-screen left).
+              As pos advances toward 0, set1 travels right into view.
+              When pos hits 0, reset to -setWidth — set2 was visually
+              covering the gap, so the loop is seamless. */}
           <div
             ref={trackRef}
             style={{
