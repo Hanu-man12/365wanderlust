@@ -355,47 +355,51 @@ export default function WhyChooseUs() {
 
         /* ── Dark mode text colours — role-based, selective ─────────────
            The section has a crimson-red bg in BOTH light and dark modes.
-           In dark mode the user wants:
-             A. "Our Approach" heading        → white  ✓ (already set below)
+           In dark mode:
+             A. "Our Approach" heading        → deep black, bold
              B. "WHY TRAVEL WITH US" label    → keep existing golden (DO NOT TOUCH)
-             C. Introductory subtext          → dark / near-black
-             D. Card headings (h3)            → dark / near-black
-             E. Card descriptions (p)         → dark / near-black
-           Cards have rgba(255,255,255,0.10) translucent bg — dark text
-           will read against this better than white in dark mode.
+             C. Introductory subtext          → deep black, bold
+             D. Card headings (h3)            → deep black, bold
+             E. Card descriptions (p)         → deep black, slightly stronger weight
+             F. Card icons                    → deep black, increased stroke width
+           Specificity: html.dark + #id + .class + .child-class wins over
+           SectionHeading's internal html.dark + .class + .child-class rule.
         ──────────────────────────────────────────────────────────────── */
 
-        /* A. Main heading "Our Approach" — BLACK in dark mode */
+        /* A. Main heading "Our Approach" — deep black, bold in dark mode */
+        html.dark #why-choose-us .section-heading--dark .sh-heading,
         html.dark #why-choose-us .sh-heading {
-          color: #111111 !important;
+          color: #0d0d0d !important;
+          font-weight: 800 !important;
         }
 
-        /* C. Introductory subtext — dark/near-black in dark mode */
+        /* C. Introductory subtext — deep black, bold in dark mode */
+        html.dark #why-choose-us .section-heading--dark .sh-subtext,
         html.dark #why-choose-us .sh-subtext {
-          color: #1a1a1a !important;
+          color: #111111 !important;
+          font-weight: 600 !important;
         }
 
-        /* D. Card headings — dark in dark mode */
+        /* D. Card headings — deep black, bold in dark mode */
         html.dark #why-choose-us .approach-card-heading {
-          color: #111111 !important;
+          color: #0d0d0d !important;
+          font-weight: 700 !important;
         }
 
-        /* E. Card descriptions — dark in dark mode */
+        /* E. Card descriptions — deep black, medium weight in dark mode */
         html.dark #why-choose-us .approach-card-body {
-          color: rgba(20, 20, 20, 0.88) !important;
+          color: #1a1a1a !important;
+          font-weight: 500 !important;
         }
 
-        /* F. Card icons — black in dark mode.
-           Lucide icons render as inline SVG with stroke="white" set via
-           the color prop. CSS cannot override an inline color="" prop
-           via the color property, but CAN override the SVG stroke attribute
-           using the svg stroke rule below — this is the correct technique
-           for lucide-react icons.
-           Scoped tightly to #why-choose-us .approach-card-icon-wrap so
-           it CANNOT affect icons in the navbar, footer, or any other section. */
+        /* F. Card icons — deep black, thicker stroke in dark mode.
+           Lucide renders as inline SVG — override stroke via CSS.
+           stroke-width bumped to 2.2 for visual boldness.
+           Scoped to #why-choose-us only — cannot affect other sections. */
         html.dark #why-choose-us .approach-card-icon-wrap svg {
-          stroke: #111111 !important;
-          color: #111111 !important;
+          stroke: #0d0d0d !important;
+          color: #0d0d0d !important;
+          stroke-width: 2.2px !important;
         }
 
         /* Note: .sh-label ("WHY TRAVEL WITH US") is deliberately excluded —
