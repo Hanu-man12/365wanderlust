@@ -355,15 +355,17 @@ export default function WhyChooseUs() {
 
         /* ── Dark mode text colours — role-based, selective ─────────────
            The section has a crimson-red bg in BOTH light and dark modes.
-           In dark mode:
+           In dark mode (per screenshot reference):
              A. "Our Approach" heading        → deep black, bold
              B. "WHY TRAVEL WITH US" label    → keep existing golden (DO NOT TOUCH)
              C. Introductory subtext          → deep black, bold
-             D. Card headings (h3)            → deep black, bold
-             E. Card descriptions (p)         → deep black, slightly stronger weight
-             F. Card icons                    → deep black, increased stroke width
-           Specificity: html.dark + #id + .class + .child-class wins over
-           SectionHeading's internal html.dark + .class + .child-class rule.
+             D. Card bg                       → lighter frosted white (matches ref)
+             E. Card headings (h3)            → deep black, bold serif
+             F. Card descriptions (p)         → deep black, readable weight
+             G. Icon circle bg               → light pinkish-white (matches ref)
+             H. Icons                         → solid deep black, thicker stroke
+           Specificity: html.dark + #id + .section-heading--dark + .child
+           beats SectionHeading's internal html.dark + .class + .child rule.
         ──────────────────────────────────────────────────────────────── */
 
         /* A. Main heading "Our Approach" — deep black, bold in dark mode */
@@ -380,26 +382,40 @@ export default function WhyChooseUs() {
           font-weight: 600 !important;
         }
 
-        /* D. Card headings — deep black, bold in dark mode */
+        /* D. Card background — lighter frosted white in dark mode
+           Matches reference: cards read as light/white panels on crimson */
+        html.dark #why-choose-us .approach-card {
+          background: rgba(255, 255, 255, 0.22) !important;
+          border-color: rgba(255, 255, 255, 0.35) !important;
+        }
+
+        /* E. Card headings — deep black, bold in dark mode */
         html.dark #why-choose-us .approach-card-heading {
           color: #0d0d0d !important;
-          font-weight: 700 !important;
+          font-weight: 800 !important;
         }
 
-        /* E. Card descriptions — deep black, medium weight in dark mode */
+        /* F. Card descriptions — deep black, medium weight in dark mode */
         html.dark #why-choose-us .approach-card-body {
-          color: #1a1a1a !important;
-          font-weight: 500 !important;
+          color: #111111 !important;
+          font-weight: 400 !important;
         }
 
-        /* F. Card icons — deep black, thicker stroke in dark mode.
-           Lucide renders as inline SVG — override stroke via CSS.
-           stroke-width bumped to 2.2 for visual boldness.
-           Scoped to #why-choose-us only — cannot affect other sections. */
+        /* G. Icon circle background — light pinkish-white in dark mode
+           Matches reference: soft white/rose circle, not dark */
+        html.dark #why-choose-us .approach-card-icon-wrap {
+          background: rgba(255, 240, 240, 0.55) !important;
+          border-color: rgba(255, 255, 255, 0.45) !important;
+        }
+
+        /* H. Icons — solid deep black, bolder stroke in dark mode.
+           Lucide renders inline SVG — override stroke via CSS.
+           stroke-width bumped to 2.4 for visual weight matching reference.
+           Scoped to #why-choose-us only — cannot bleed to other sections. */
         html.dark #why-choose-us .approach-card-icon-wrap svg {
-          stroke: #0d0d0d !important;
-          color: #0d0d0d !important;
-          stroke-width: 2.2px !important;
+          stroke: #0a0a0a !important;
+          color: #0a0a0a !important;
+          stroke-width: 2.4px !important;
         }
 
         /* Note: .sh-label ("WHY TRAVEL WITH US") is deliberately excluded —
