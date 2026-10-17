@@ -10,6 +10,8 @@ import SectionHeading from './SectionHeading';
 import FramedImage from './FramedImage';
 import Lightbox from './Lightbox';
 import Reveal from './Reveal';
+import FanDeck from './FanDeck';
+import { exploreIndia } from '../data/siteData';
 
 function DestinationCard({ dest, onOpenImage, index }) {
   const isEven = index % 2 === 0;
@@ -190,6 +192,19 @@ export default function Destinations() {
         }}
       >
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          {/* ── Explore India fan deck ── */}
+          <div style={{ marginBottom: '5rem' }}>
+            <Reveal>
+              <SectionHeading
+                label="Explore India"
+                heading="Where Do You Want To Go?"
+                subtext="Nine incredible destinations. Your next adventure starts here."
+                align="center"
+              />
+            </Reveal>
+            <FanDeck destinations={exploreIndia} />
+          </div>
+
           <Reveal>
             <SectionHeading
               label="Explore Rajasthan"
@@ -197,6 +212,9 @@ export default function Destinations() {
               subtext="Five extraordinary places. Infinite stories waiting to be lived."
             />
           </Reveal>
+
+          {/* Bengal navigation anchor */}
+          <div id="bengal-destinations" style={{ scrollMarginTop: '80px' }} />
 
           <div>
             {destinations.map((dest, i) => (
