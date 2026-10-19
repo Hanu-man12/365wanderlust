@@ -154,7 +154,7 @@ export default function Destinations() {
         <Reveal>
           <div style={{
             textAlign: 'center',
-            paddingTop: 'clamp(60px, 5vw, 80px)',
+            paddingTop: 'clamp(30px, 2.5vw, 40px)',
             marginBottom: 'clamp(1.8rem, 3.5vw, 3rem)',
           }}>
 
