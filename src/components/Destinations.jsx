@@ -143,7 +143,7 @@ export default function Destinations() {
       id="destinations"
       aria-labelledby="destinations-heading"
       style={{
-        padding: 'clamp(3.5rem, 7vw, 6rem) 1.5rem clamp(2rem, 4vw, 3rem)',
+        padding: 'clamp(4.5rem, 9vw, 7.5rem) 1.5rem clamp(2rem, 4vw, 3rem)',
         background: sectionBg,
         transition: 'background 0.3s ease',
       }}
