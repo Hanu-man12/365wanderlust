@@ -160,8 +160,8 @@ export const destinations = [
 
 // ── Explore India ─────────────────────────────────────────────
 export const exploreIndia = [
-  { id: 'bengal',          name: 'Bengal',           status: 'available',    image: '/destinations/bengal.jpg',              tagline: 'Land of Culture & Rivers' },
-  { id: 'rajasthan',       name: 'Rajasthan',         status: 'available',    image: '/destinations/rajasthan.jpg',           tagline: 'Royal Deserts & Palaces' },
+  { id: 'bengal',          name: 'Bengal',           status: 'available',    image: '/destinations/bengal.jpeg',             tagline: 'Land of Culture & Rivers' },
+  { id: 'rajasthan',       name: 'Rajasthan',         status: 'available',    image: '/destinations/rajasthan.jpeg',          tagline: 'Royal Deserts & Palaces' },
   { id: 'bihar',           name: 'Bihar',             status: 'coming-soon',  image: '/destinations/bihar.jpeg',              tagline: 'Ancient Civilisations' },
   { id: 'himachal',        name: 'Himachal Pradesh',  status: 'coming-soon',  image: '/destinations/himachal-pradesh.jpeg',   tagline: 'Mountains & Pine Forests' },
   { id: 'uttarakhand',     name: 'Uttarakhand',       status: 'coming-soon',  image: '/destinations/uttarakhand.jpeg',        tagline: 'Abode of the Gods' },
