@@ -131,7 +131,11 @@ export default function Destinations() {
           }}>
 
             {/* Globe icon */}
-            <div style={{ marginBottom: '0.9rem', lineHeight: 0 }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: '0.9rem',
+            }}>
               <GlobeIcon size={48} color="#C8921A" />
             </div>
 
