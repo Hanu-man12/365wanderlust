@@ -127,7 +127,7 @@ export default function Destinations() {
         <Reveal>
           <div style={{
             textAlign: 'center',
-            marginBottom: 'clamp(2rem, 4vw, 3.5rem)',
+            marginBottom: 'clamp(1rem, 2vw, 1.5rem)',
           }}>
 
             {/* Globe icon */}
@@ -204,11 +204,13 @@ export default function Destinations() {
               }} />
             </div>
 
-            {/* EXPLORE INDIA — gold rule label */}
-            <GoldRule text="Explore India" color="#C8921A" />
-
           </div>
         </Reveal>
+
+        {/* EXPLORE INDIA — immediately above the cards */}
+        <div style={{ marginBottom: 'clamp(1.2rem, 2.5vw, 2rem)' }}>
+          <GoldRule text="Explore India" color="#C8921A" />
+        </div>
 
         {/* ── Fan deck cards ── */}
         <FanDeck destinations={exploreIndia} />
