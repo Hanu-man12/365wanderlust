@@ -1,13 +1,30 @@
 // ============================================================
-//  Destinations Section  (v2)
-//  Custom heading: globe icon → "JOURNEYS WITHOUT LIMITS" →
-//  "Let Your Next Journey / Begin Here" → compass divider →
-//  "EXPLORE INDIA" → fan deck cards.
+//  Destinations Section  (v3)
+//  Theme-aware background (light/dark).
+//  Globe icon centered, EXPLORE INDIA above cards with spacing.
 // ============================================================
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { exploreIndia } from '../data/siteData';
 import FanDeck from './FanDeck';
 import Reveal from './Reveal';
+
+// ── useDarkMode — watches html.dark (same pattern as Navbar/About) ──
+function useDarkMode() {
+  const [isDark, setIsDark] = useState(
+    () => document.documentElement.classList.contains('dark')
+  );
+  useEffect(() => {
+    const observer = new MutationObserver(() =>
+      setIsDark(document.documentElement.classList.contains('dark'))
+    );
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    return () => observer.disconnect();
+  }, []);
+  return isDark;
+}
 
 // ── Globe SVG ────────────────────────────────────────────────
 // Minimal line-art globe: latitude/longitude arcs on a circle.
@@ -112,13 +129,23 @@ function GoldRule({ text, color = '#C8921A' }) {
 }
 
 export default function Destinations() {
+  const isDark = useDarkMode();
+
+  // Theme tokens
+  const sectionBg      = isDark ? '#0a0a0a'   : '#F8F6F3';
+  const headingColor   = isDark ? '#F8F4ED'   : '#1a1a1a';
+  const compassLineBg  = isDark
+    ? 'rgba(208,17,43,0.5)'
+    : 'rgba(208,17,43,0.35)';
+
   return (
     <section
       id="destinations"
       aria-labelledby="destinations-heading"
       style={{
         padding: 'clamp(3.5rem, 7vw, 6rem) 1.5rem clamp(2rem, 4vw, 3rem)',
-        background: '#0a0a0a',
+        background: sectionBg,
+        transition: 'background 0.3s ease',
       }}
     >
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
@@ -127,7 +154,7 @@ export default function Destinations() {
         <Reveal>
           <div style={{
             textAlign: 'center',
-            marginBottom: 'clamp(1rem, 2vw, 1.5rem)',
+            marginBottom: 'clamp(1.8rem, 3.5vw, 3rem)',
           }}>
 
             {/* Globe icon */}
@@ -147,19 +174,19 @@ export default function Destinations() {
               id="destinations-heading"
               style={{ margin: '1rem 0 0 0' }}
             >
-              {/* "Let Your Next Journey" — cream white, serif bold */}
+              {/* "Let Your Next Journey" — theme-aware */}
               <span style={{
                 display: 'block',
                 fontFamily: 'var(--font-serif)',
                 fontSize: 'clamp(2.2rem, 5.5vw, 4rem)',
                 fontWeight: 700,
-                color: '#F8F4ED',
+                color: headingColor,
                 lineHeight: 1.1,
                 letterSpacing: '-0.01em',
               }}>
                 Let Your Next Journey
               </span>
-              {/* "Begin Here" — crimson, italic, serif */}
+              {/* "Begin Here" — always crimson italic */}
               <span style={{
                 display: 'block',
                 fontFamily: 'var(--font-serif)',
@@ -193,26 +220,28 @@ export default function Destinations() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.6rem',
-              marginBottom: '1.2rem',
             }}>
               <div style={{
                 width: 36,
                 height: 1,
-                background: 'linear-gradient(to right, transparent, rgba(208,17,43,0.5))',
+                background: `linear-gradient(to right, transparent, ${compassLineBg})`,
               }} />
               <CompassDivider color="#D0112B" />
               <div style={{
                 width: 36,
                 height: 1,
-                background: 'linear-gradient(to left, transparent, rgba(208,17,43,0.5))',
+                background: `linear-gradient(to left, transparent, ${compassLineBg})`,
               }} />
             </div>
 
           </div>
         </Reveal>
 
-        {/* EXPLORE INDIA — immediately above the cards */}
-        <div style={{ marginBottom: 'clamp(1.2rem, 2.5vw, 2rem)' }}>
+        {/* EXPLORE INDIA — clearly separated, sits just above cards */}
+        <div style={{
+          marginTop: 'clamp(1.8rem, 3vw, 2.8rem)',
+          marginBottom: 'clamp(1rem, 2vw, 1.6rem)',
+        }}>
           <GoldRule text="Explore India" color="#C8921A" />
         </div>
 
