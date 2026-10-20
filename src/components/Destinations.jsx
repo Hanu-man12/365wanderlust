@@ -259,28 +259,16 @@ export default function Destinations() {
             marginTop: 'clamp(2.5rem, 5vw, 4rem)',
             marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
           }}>
-            {/* subtle gold eyebrow label */}
-            <GoldRule text="Bengal" color="#C8921A" />
-
-            {/* "Bengal" + "Land of Culture & Rivers" — compact title group */}
+            {/* gold label + subtitle — compact centered group */}
             <div style={{ marginTop: '1.2rem' }}>
-              <h3 style={{
-                fontFamily: 'var(--font-serif)',
-                fontSize: 'clamp(2rem, 4.5vw, 3rem)',
-                fontWeight: 700,
-                color: '#D0112B',
-                margin: '0 0 0.25rem 0',
-                lineHeight: 1.1,
-              }}>
-                Bengal
-              </h3>
+              <GoldRule text="Bengal" color="#C8921A" />
 
               {/* sans muted subtitle */}
               <p style={{
                 fontFamily: 'var(--font-sans)',
                 fontSize: 'clamp(0.9rem, 2vw, 1.05rem)',
                 color: isDark ? '#a0a0a0' : '#666',
-                margin: 0,
+                margin: '0.5rem 0 0 0',
               }}>
                 Land of Culture & Rivers
               </p>
