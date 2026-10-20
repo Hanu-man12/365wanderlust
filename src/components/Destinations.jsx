@@ -242,10 +242,25 @@ export default function Destinations() {
         {/* EXPLORE INDIA — clearly separated, sits just above cards */}
         <div style={{
           marginTop: 'clamp(1.8rem, 3vw, 2.8rem)',
-          marginBottom: 'clamp(1rem, 2vw, 1.6rem)',
+          marginBottom: 'clamp(0.5rem, 1vw, 0.8rem)',
         }}>
           <GoldRule text="Explore India" color="#C8921A" />
         </div>
+
+        {/* Tagline below EXPLORE INDIA, above cards */}
+        <p style={{
+          textAlign: 'center',
+          fontFamily: 'var(--font-sans)',
+          fontSize: 'clamp(0.58rem, 1.3vw, 0.72rem)',
+          fontWeight: 500,
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          color: '#C8921A',
+          opacity: 0.75,
+          margin: '0 0 clamp(1rem, 2vw, 1.6rem) 0',
+        }}>
+          A Land of Stories &amp; Wonders
+        </p>
 
         {/* ── Fan deck cards ── */}
         <FanDeck destinations={exploreIndia} />
