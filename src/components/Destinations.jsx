@@ -262,27 +262,29 @@ export default function Destinations() {
             {/* subtle gold eyebrow label */}
             <GoldRule text="Bengal" color="#C8921A" />
 
-            {/* serif crimson heading */}
-            <h3 style={{
-              fontFamily: 'var(--font-serif)',
-              fontSize: 'clamp(2rem, 4.5vw, 3rem)',
-              fontWeight: 700,
-              color: '#D0112B',
-              margin: '1rem 0 0.3rem',
-              lineHeight: 1.1,
-            }}>
-              Bengal
-            </h3>
+            {/* "Bengal" + "Land of Culture & Rivers" — compact title group */}
+            <div style={{ marginTop: '1.2rem' }}>
+              <h3 style={{
+                fontFamily: 'var(--font-serif)',
+                fontSize: 'clamp(2rem, 4.5vw, 3rem)',
+                fontWeight: 700,
+                color: '#D0112B',
+                margin: '0 0 0.25rem 0',
+                lineHeight: 1.1,
+              }}>
+                Bengal
+              </h3>
 
-            {/* sans muted subtitle */}
-            <p style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: 'clamp(0.9rem, 2vw, 1.05rem)',
-              color: isDark ? '#a0a0a0' : '#666',
-              margin: 0,
-            }}>
-              Land of Culture & Rivers
-            </p>
+              {/* sans muted subtitle */}
+              <p style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: 'clamp(0.9rem, 2vw, 1.05rem)',
+                color: isDark ? '#a0a0a0' : '#666',
+                margin: 0,
+              }}>
+                Land of Culture & Rivers
+              </p>
+            </div>
           </div>
         </Reveal>
 
