@@ -288,32 +288,34 @@ function InfoPanel({ dest, isDark, onClose }) {
             {dest.tagline}
           </p>
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <a
-              href={getWhatsAppLink(waMsg)}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                background: '#25D366',
-                color: 'white',
-                fontFamily: 'var(--font-sans)',
-                fontWeight: 700,
-                fontSize: '0.75rem',
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                padding: '0.55rem 1rem',
-                borderRadius: 8,
-                minHeight: 44,
-                transition: 'background 0.2s',
-              }}
-              onMouseOver={e => e.currentTarget.style.background = '#1da851'}
-              onMouseOut={e => e.currentTarget.style.background = '#25D366'}
-            >
-              📱 Plan My Trip
-            </a>
+            {dest.id !== 'bengal' && (
+              <a
+                href={getWhatsAppLink(waMsg)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  background: '#25D366',
+                  color: 'white',
+                  fontFamily: 'var(--font-sans)',
+                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  textDecoration: 'none',
+                  padding: '0.55rem 1rem',
+                  borderRadius: 8,
+                  minHeight: 44,
+                  transition: 'background 0.2s',
+                }}
+                onMouseOver={e => e.currentTarget.style.background = '#1da851'}
+                onMouseOut={e => e.currentTarget.style.background = '#25D366'}
+              >
+                📱 Plan My Trip
+              </a>
+            )}
             <a
               href={scrollTarget}
               style={{
