@@ -13,12 +13,8 @@ import logoMark from '../assets/brand/logo-mark.png';
 // Place file at: src/assets/brand/hero-banner.jpeg
 import heroBanner from '../assets/brand/hero-banner.jpeg';
 
-// ── Trial image imports ──────────────────────────────────────
-// TRIAL IMAGES — replace with final photos (see README for how-to)
-import posterRajasthan1 from '../assets/trial/rajasthan-journey.jpg';
-import posterRajasthan2 from '../assets/trial/rajasthan-feeling-stays.jpg';
-import posterRajasthan3 from '../assets/trial/rajasthan-where-journey.jpg';
-import posterPushkar    from '../assets/trial/pushkar-poster.jpg';
+// ── Trial images removed ─────────────────────────────────────
+// Add final destination photos here when ready.
 
 // ── Brand & Contact ─────────────────────────────────────────
 export const brand = {
@@ -80,7 +76,7 @@ export const hero = {
 // ── About / Our Story ────────────────────────────────────────
 export const about = {
   // TRIAL IMAGE — replace with a team/company/landscape portrait photo
-  image: posterRajasthan2,
+  image: null,
   imageAlt: 'Rajasthan travel poster — The Feeling Stays',
   // [ADD COMPANY STORY] — owner to supply 2-3 paragraphs about the company origin
   storyParagraph1:
@@ -104,7 +100,7 @@ export const destinations = [
       'Royal forts, vibrant bazaars, and the iconic Hawa Mahal. Jaipur is where Rajasthan\'s regal history comes alive in technicolour.',
     highlights: ['Hawa Mahal', 'Amber Fort', 'City Palace', 'Jantar Mantar'],
     // TRIAL IMAGE — replace with: portrait photo of Hawa Mahal / Jaipur street, 1200×1500px
-    image: posterRajasthan1,
+    image: null,
     imageAlt: 'Hawa Mahal and the streets of Jaipur — The Pink City of Rajasthan',
     whatsappMessage: 'Hello! I am interested in a Jaipur travel package. Please share details.',
   },
@@ -116,7 +112,7 @@ export const destinations = [
       'The cobalt-blue lanes beneath the mighty Mehrangarh Fort create one of the world\'s most dramatic cityscapes.',
     highlights: ['Mehrangarh Fort', 'Blue City Walk', 'Umaid Bhawan', 'Clock Tower Market'],
     // TRIAL IMAGE — replace with: portrait photo of Blue City / Mehrangarh, 1200×1500px
-    image: posterRajasthan3,
+    image: null,
     imageAlt: 'Mehrangarh Fort and the blue-painted city of Jodhpur, Rajasthan',
     whatsappMessage: 'Hello! I am interested in a Jodhpur travel package. Please share details.',
   },
@@ -128,7 +124,7 @@ export const destinations = [
       'Shimmering lake palaces, sunset boat rides on Pichola, and the romance of a city that seems to float on water.',
     highlights: ['Lake Pichola', 'City Palace', 'Jag Mandir', 'Sajjangarh Monsoon Palace'],
     // TRIAL IMAGE — replace with: portrait photo of Lake Palace / Udaipur sunset, 1200×1500px
-    image: posterRajasthan2,
+    image: null,
     imageAlt: 'The City Palace and Lake Pichola at sunset — Udaipur, the City of Lakes',
     whatsappMessage: 'Hello! I am interested in a Udaipur travel package. Please share details.',
   },
@@ -140,7 +136,7 @@ export const destinations = [
       'Sacred ghats, the ancient Brahma Temple, and the magic of the Thar desert — all in one unforgettable desert town.',
     highlights: ['Pushkar Lake', 'Brahma Temple', 'Camel Safari', 'Desert Camp', 'Pushkar Bazaar'],
     // TRIAL IMAGE — replace with: portrait photo of Pushkar Lake / ghats, 1200×1500px
-    image: posterPushkar,
+    image: null,
     imageAlt: 'Pushkar Lake with ghats and temple — Pushkar, Rajasthan desert town',
     whatsappMessage: 'Hello! I am interested in a Pushkar travel package. Please share details.',
   },
@@ -152,7 +148,7 @@ export const destinations = [
       'Camel safaris across golden sand dunes, starlit desert camps, folk music under open skies — an experience unlike any other.',
     highlights: ['Camel Safari', 'Luxury Desert Camp', 'Desert Sunrise', 'Folk Music Evening', 'Stargazing'],
     // TRIAL IMAGE — replace with: landscape photo of sand dunes at sunset, 1200×1500px
-    image: posterPushkar,
+    image: null,
     imageAlt: 'Camel caravan crossing golden Thar Desert sand dunes at sunset',
     whatsappMessage: 'Hello! I am interested in a Thar Desert safari experience. Please share details.',
   },
@@ -179,7 +175,7 @@ export const packages = [
     destination: 'Pushkar & Thar Desert',
     duration: '4 Days / 3 Nights',
     // TRIAL IMAGE — replace with: landscape photo of desert camp at night, 1600×900px
-    image: posterPushkar,
+    image: null,
     imageAlt: 'Pushkar Desert Nights package — luxury desert camp and camel safari poster',
     description:
       'Experience the sacred town of Pushkar by day and the magic of a luxury desert camp by night. From ancient temples and vibrant markets to camel safaris and folk music under the stars — this is Rajasthan at its most authentic.',
@@ -249,7 +245,7 @@ export const packages = [
     destination: 'Jaipur · Jodhpur · Udaipur',
     duration: '[ADD DURATION]',
     // TRIAL IMAGE — replace with: landscape photo of Rajasthan montage, 1600×900px
-    image: posterRajasthan3,
+    image: null,
     imageAlt: 'Royal Rajasthan Tour — Jaipur, Jodhpur and Udaipur travel package poster',
     description:
       '[ADD PACKAGE DESCRIPTION — Owner to supply details for the Rajasthan circuit tour]',
@@ -317,7 +313,7 @@ export const journey = [
     heading: 'The Journey Begins',
     body: 'The moment you enter Rajasthan, everything feels different. The colours become brighter, the architecture feels timeless, and every road seems to lead toward another story. This is where the journey begins.',
     // TRIAL IMAGE — replace with: portrait/landscape of Rajasthan road / entrance, 900×1200px
-    image: posterRajasthan1,
+    image: null,
     imageAlt: 'Traveller entering Rajasthan — the journey begins, Hawa Mahal and Jodhpur fort visible',
     rotation: '-2deg',
   },
@@ -327,7 +323,7 @@ export const journey = [
     heading: 'Where Every Journey Becomes A Story',
     body: 'Rajasthan is more than a destination — it is a feeling. From royal palaces and vibrant streets to endless desert sunsets, every corner tells a story of heritage, culture and timeless beauty. Come for the colours, stay for the memories.',
     // TRIAL IMAGE — replace with: landscape of Rajasthan montage / cultural scene, 900×1200px
-    image: posterRajasthan3,
+    image: null,
     imageAlt: 'Rajasthan travel collage — royal palaces, desert camel safaris, vibrant bazaars',
     rotation: '1.5deg',
   },
@@ -338,7 +334,7 @@ export const journey = [
     body: 'And then comes the moment you realise Rajasthan was never just a trip. It was the sunset by the lake, the laughter in colourful streets, the silence of the desert and the stories you carried back home. Some journeys end. The feeling stays.',
     scriptLine: 'Until the next journey...',
     // TRIAL IMAGE — replace with: portrait of sunset / lake palace / reflective moment, 900×1200px
-    image: posterRajasthan2,
+    image: null,
     imageAlt: 'Rajasthan The Feeling Stays poster — sunset over lake, folk dancer, desert camel riders',
     rotation: '-1.5deg',
   },
@@ -350,7 +346,7 @@ export const gallery = [
   {
     id: 'g1',
     // TRIAL IMAGE — replace with: landscape photo of Hawa Mahal exterior, 1200×800px
-    image: posterRajasthan3,
+    image: null,
     alt: 'Rajasthan travel collage — Hawa Mahal, Blue City Jodhpur, Lake Palace Udaipur',
     size: 'large',    // large | medium | small (controls gallery layout weighting)
     rotation: '-1deg',
@@ -358,7 +354,7 @@ export const gallery = [
   {
     id: 'g2',
     // TRIAL IMAGE — replace with: portrait photo of Pushkar Lake ghats, 800×1200px
-    image: posterPushkar,
+    image: null,
     alt: 'Pushkar Lake and sacred ghats with temples — Pushkar Desert Nights package poster',
     size: 'medium',
     rotation: '2deg',
@@ -366,7 +362,7 @@ export const gallery = [
   {
     id: 'g3',
     // TRIAL IMAGE — replace with: landscape photo of desert camp at night, 1200×800px
-    image: posterRajasthan1,
+    image: null,
     alt: 'Rajasthan journey poster — The Journey Begins, Jaipur and Jodhpur landmarks',
     size: 'medium',
     rotation: '-2deg',
@@ -374,7 +370,7 @@ export const gallery = [
   {
     id: 'g4',
     // TRIAL IMAGE — replace with: portrait of Rajasthani folk dancer, 800×1200px
-    image: posterRajasthan2,
+    image: null,
     alt: 'Rajasthan The Feeling Stays poster — camel safari, folk dance, lake palace sunset',
     size: 'small',
     rotation: '1.5deg',
@@ -382,7 +378,7 @@ export const gallery = [
   {
     id: 'g5',
     // TRIAL IMAGE — replace with: landscape of Mehrangarh Fort panorama, 1200×800px
-    image: posterPushkar,
+    image: null,
     alt: 'Pushkar Desert Experience — camel safari, desert camp, folk culture and sunrise',
     size: 'small',
     rotation: '-1.5deg',
