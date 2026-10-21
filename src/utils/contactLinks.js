@@ -6,13 +6,16 @@
 import { contact } from '../data/siteData';
 
 /**
- * Generate a WhatsApp wa.me link with pre-filled message
+ * Generate a WhatsApp click-to-chat link with pre-filled message
  * @param {string} message - Custom message. Defaults to the siteData default.
- * @returns {string} Full wa.me URL with encoded message
+ * @returns {string} Full api.whatsapp.com URL with encoded message
  */
 export function getWhatsAppLink(message) {
   const msg = message || contact.whatsappDefaultMessage;
-  return `https://wa.me/${contact.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+  // Use api.whatsapp.com/send directly instead of wa.me.
+  // wa.me redirects to this endpoint and corrupts emoji percent-encoding
+  // (replaces emojis with U+FFFD replacement characters during the redirect).
+  return `https://api.whatsapp.com/send?phone=${contact.whatsappNumber}&text=${encodeURIComponent(msg)}`;
 }
 
 /**
