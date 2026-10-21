@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { exploreIndia } from '../data/siteData';
 import FanDeck from './FanDeck';
 import BengalCards from './BengalCards';
+import RajasthanCards from './RajasthanCards';
 import Reveal from './Reveal';
 
 // ── useDarkMode — watches html.dark (same pattern as Navbar/About) ──
@@ -292,6 +293,34 @@ export default function Destinations() {
         </Reveal>
 
         <BengalCards />
+
+        {/* ── Rajasthan destination details ── */}
+        <div id="rajasthan-destinations" style={{ scrollMarginTop: '80px' }} />
+
+        <Reveal>
+          <div style={{
+            textAlign: 'center',
+            marginTop: 'clamp(2.5rem, 5vw, 4rem)',
+            marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
+          }}>
+            {/* gold label + subtitle — compact centered group */}
+            <div style={{ marginTop: '1.2rem' }}>
+              <GoldRule text="Rajasthan" color="#C8921A" />
+
+              {/* sans muted subtitle */}
+              <p style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: 'clamp(0.9rem, 2vw, 1.05rem)',
+                color: isDark ? '#a0a0a0' : '#666',
+                margin: '0.5rem 0 0 0',
+              }}>
+                Royal Deserts &amp; Palaces
+              </p>
+            </div>
+          </div>
+        </Reveal>
+
+        <RajasthanCards />
 
       </div>
     </section>

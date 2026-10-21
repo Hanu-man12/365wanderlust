@@ -215,7 +215,7 @@ function DestCard({ dest, isActive, onClick, cardW, cardH, rotate, translateX, z
 // ── Info Panel ───────────────────────────────────────────────
 function InfoPanel({ dest, isDark, onClose }) {
   const isAvailable = dest.status === 'available';
-  const scrollTarget = dest.id === 'rajasthan' ? '#destinations' : `#${dest.id}-destinations`;
+  const scrollTarget = dest.id === 'rajasthan' ? '#rajasthan-destinations' : `#${dest.id}-destinations`;
   const waMsg = `Hello! I am interested in exploring ${dest.name}. Please share details about your packages.`;
 
   const panelBg = isDark ? '#1a1a1a' : '#fff';
