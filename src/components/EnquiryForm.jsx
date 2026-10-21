@@ -5,15 +5,27 @@
 // ============================================================
 import React, { useState } from 'react';
 import { Send, CheckCircle } from 'lucide-react';
-import { destinations, packages, contact } from '../data/siteData';
 import { getWhatsAppLink } from '../utils/contactLinks';
+
+// ── Cascading destination dropdown data ──
+// Country → Region → Destination chain matching the Explore India sections
+const COUNTRIES = ['India'];
+const REGIONS_BY_COUNTRY = {
+  India: ['Bengal', 'Rajasthan'],
+};
+const DESTINATIONS_BY_REGION = {
+  Bengal: ['Barhanti', 'Teesta'],
+  Rajasthan: ['Pushkar Desert Escape', 'Alwar + Sariska'],
+};
 
 const initialState = {
   name: '',
   phone: '',
   email: '',
+  country: '',
+  region: '',
   destination: '',
-  travelDateFrom: '',  // was: travelDates (plain text) → now two date inputs
+  travelDateFrom: '',
   travelDateTo: '',
   travellers: '',
   message: '',
@@ -45,6 +57,14 @@ const labelStyle = {
   marginBottom: '0.35rem',
 };
 
+const selectStyle = {
+  ...inputStyle,
+  appearance: 'none',
+  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A5C48' strokeWidth='1.5' fill='none' strokeLinecap='round'/%3E%3C/svg%3E")`,
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'right 0.9rem center',
+};
+
 export default function EnquiryForm() {
   const [form, setForm] = useState(initialState);
   const [errors, setErrors] = useState({});
@@ -54,9 +74,6 @@ export default function EnquiryForm() {
   // Computed once on render using local client date (not server)
   const todayStr = new Date().toISOString().split('T')[0];
 
-  // All destination options from siteData
-  const destOptions = destinations.map(d => d.name);
-
   const validate = () => {
     const e = {};
     if (!form.name.trim())  e.name  = 'Your name is required.';
@@ -65,13 +82,26 @@ export default function EnquiryForm() {
       e.phone = 'Please enter a valid phone number.';
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       e.email = 'Please enter a valid email address.';
+    if (!form.country)     e.country     = 'Please select a country.';
+    if (!form.region)      e.region      = 'Please select a region.';
+    if (!form.destination) e.destination = 'Please select a destination.';
     return e;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(f => ({ ...f, [name]: value }));
-    if (errors[name]) setErrors(er => { const n = { ...er }; delete n[name]; return n; });
+    setForm(f => {
+      if (name === 'country') return { ...f, country: value, region: '', destination: '' };
+      if (name === 'region')  return { ...f, region: value, destination: '' };
+      return { ...f, [name]: value };
+    });
+    setErrors(er => {
+      const n = { ...er };
+      delete n[name];
+      if (name === 'country') { delete n.region; delete n.destination; }
+      if (name === 'region')   { delete n.destination; }
+      return n;
+    });
   };
 
   const handleSubmit = (e) => {
@@ -95,7 +125,7 @@ export default function EnquiryForm() {
       `*Name:* ${form.name}`,
       `*Phone:* ${form.phone}`,
       form.email        ? `*Email:* ${form.email}` : null,
-      form.destination  ? `*Destination:* ${form.destination}` : null,
+      form.destination  ? `*Destination:* ${form.country}, ${form.region}, ${form.destination}` : null,
       travelDatesStr    ? `*Travel Dates:* ${travelDatesStr}` : null,
       form.travellers   ? `*No. of Travellers:* ${form.travellers}` : null,
       form.message      ? `*Message:* ${form.message}` : null,
@@ -272,23 +302,75 @@ export default function EnquiryForm() {
         {errors.email && <p id="err-email" role="alert" style={{ color: 'var(--color-brand-red)', fontSize: '0.72rem', marginTop: '0.25rem' }}>{errors.email}</p>}
       </div>
 
-      {/* Destination */}
+      {/* Select a Country — always visible */}
       <div style={{ marginBottom: '1rem' }}>
-        <label htmlFor="enq-destination" style={labelStyle}>Destination of Interest</label>
+        <label htmlFor="enq-country" style={labelStyle}>
+          Select a Country <span style={{ color: 'var(--color-brand-red)' }}>*</span>
+        </label>
         <select
-          id="enq-destination"
-          name="destination"
-          value={form.destination}
+          id="enq-country"
+          name="country"
+          value={form.country}
           onChange={handleChange}
-          style={{ ...inputStyle, appearance: 'none', backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A5C48' strokeWidth='1.5' fill='none' strokeLinecap='round'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.9rem center' }}
+          aria-required="true"
+          aria-invalid={!!errors.country}
+          style={{ ...selectStyle, borderColor: errors.country ? 'var(--color-brand-red)' : 'rgba(212,149,106,0.35)' }}
           onFocus={e => { e.target.style.borderColor = 'var(--color-sand)'; }}
-          onBlur={e => { e.target.style.borderColor = 'rgba(212,149,106,0.35)'; }}
+          onBlur={e => { e.target.style.borderColor = errors.country ? 'var(--color-brand-red)' : 'rgba(212,149,106,0.35)'; }}
         >
-          <option value="">— Select a destination —</option>
-          {destOptions.map(d => <option key={d} value={d}>{d}</option>)}
-          <option value="Multiple / Not sure">Multiple / Not sure yet</option>
+          <option value="">— Select a country —</option>
+          {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
+        {errors.country && <p role="alert" style={{ color: 'var(--color-brand-red)', fontSize: '0.72rem', marginTop: '0.25rem' }}>{errors.country}</p>}
       </div>
+
+      {/* Select a Region — revealed after country selection */}
+      {form.country && (
+        <div style={{ marginBottom: '1rem' }}>
+          <label htmlFor="enq-region" style={labelStyle}>
+            Select a Region <span style={{ color: 'var(--color-brand-red)' }}>*</span>
+          </label>
+          <select
+            id="enq-region"
+            name="region"
+            value={form.region}
+            onChange={handleChange}
+            aria-required="true"
+            aria-invalid={!!errors.region}
+            style={{ ...selectStyle, borderColor: errors.region ? 'var(--color-brand-red)' : 'rgba(212,149,106,0.35)' }}
+            onFocus={e => { e.target.style.borderColor = 'var(--color-sand)'; }}
+            onBlur={e => { e.target.style.borderColor = errors.region ? 'var(--color-brand-red)' : 'rgba(212,149,106,0.35)'; }}
+          >
+            <option value="">— Select a region —</option>
+            {(REGIONS_BY_COUNTRY[form.country] || []).map(r => <option key={r} value={r}>{r}</option>)}
+          </select>
+          {errors.region && <p role="alert" style={{ color: 'var(--color-brand-red)', fontSize: '0.72rem', marginTop: '0.25rem' }}>{errors.region}</p>}
+        </div>
+      )}
+
+      {/* Destination of Interest — revealed after region selection */}
+      {form.region && (
+        <div style={{ marginBottom: '1rem' }}>
+          <label htmlFor="enq-destination" style={labelStyle}>
+            Destination of Interest <span style={{ color: 'var(--color-brand-red)' }}>*</span>
+          </label>
+          <select
+            id="enq-destination"
+            name="destination"
+            value={form.destination}
+            onChange={handleChange}
+            aria-required="true"
+            aria-invalid={!!errors.destination}
+            style={{ ...selectStyle, borderColor: errors.destination ? 'var(--color-brand-red)' : 'rgba(212,149,106,0.35)' }}
+            onFocus={e => { e.target.style.borderColor = 'var(--color-sand)'; }}
+            onBlur={e => { e.target.style.borderColor = errors.destination ? 'var(--color-brand-red)' : 'rgba(212,149,106,0.35)'; }}
+          >
+            <option value="">— Select a destination —</option>
+            {(DESTINATIONS_BY_REGION[form.region] || []).map(d => <option key={d} value={d}>{d}</option>)}
+          </select>
+          {errors.destination && <p role="alert" style={{ color: 'var(--color-brand-red)', fontSize: '0.72rem', marginTop: '0.25rem' }}>{errors.destination}</p>}
+        </div>
+      )}
 
       {/* Row: Travel Dates (From + To) + Travellers */}
       {/* Date approach: two linked <input type="date"> — From and To.
