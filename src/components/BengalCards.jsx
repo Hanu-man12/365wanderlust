@@ -72,7 +72,7 @@ const BENGAL_CARDS = [
 ];
 
 // ── Single 3D card ───────────────────────────────────────────
-function BengalCard({ card, index, isDark, reducedMotion, maxWidth, isMobile, activeIndex, onSelect, cardW, cardH, onOpen }) {
+function BengalCard({ card, index, isDark, reducedMotion, isMobile, activeIndex, onSelect, cardW, cardH, onOpen }) {
   const [imgError, setImgError] = useState(false);
 
   const cardBg = isDark ? '#1a1a1a' : '#ffffff';
@@ -84,20 +84,32 @@ function BengalCard({ card, index, isDark, reducedMotion, maxWidth, isMobile, ac
     ? { y: -6, boxShadow: '0 30px 80px rgba(0,0,0,0.4)' }
     : { rotateY: index === 0 ? -3 : 3, y: -6, boxShadow: '0 30px 80px rgba(0,0,0,0.4)' };
 
-  // ── Carousel mode (mobile): one active card, neighbors peek ──
-  const offset = isMobile ? index - activeIndex : 0;
+  // ── Carousel: one active card centered, neighbors peek with 3D depth ──
+  const offset = index - activeIndex;
   const isActive = offset === 0;
 
-  let carouselAnimate = isMobile
-    ? (offset === 0
-        ? { x: 0, rotateY: 0, scale: 1, opacity: 1, zIndex: 3 }
-        : { x: offset > 0 ? '55%' : '-55%', rotateY: offset > 0 ? -12 : 12, scale: 0.85, opacity: 0.5, zIndex: 1 })
-    : undefined;
-  if (reducedMotion && isMobile && carouselAnimate) {
-    carouselAnimate = { ...carouselAnimate, rotateY: 0 };
+  const peekX = isMobile ? '55%' : '50%';
+  const peekRotateY = isMobile ? 12 : 8;
+  const peekScale = isMobile ? 0.85 : 0.8;
+  const peekOpacity = isMobile ? 0.5 : 0.4;
+
+  let animate;
+  if (offset === 0) {
+    animate = { x: 0, rotateY: 0, scale: 1, opacity: 1, zIndex: 3 };
+  } else {
+    animate = {
+      x: offset > 0 ? peekX : `-${peekX}`,
+      rotateY: offset > 0 ? -peekRotateY : peekRotateY,
+      scale: peekScale,
+      opacity: peekOpacity,
+      zIndex: 1,
+    };
+  }
+  if (reducedMotion) {
+    animate = { ...animate, rotateY: 0 };
   }
 
-  const handleClick = isMobile ? () => { if (isActive) onOpen(); else onSelect(); } : onOpen;
+  const handleClick = () => { if (isActive) onOpen(); else onSelect(); };
 
   return (
     <motion.div
@@ -106,34 +118,22 @@ function BengalCard({ card, index, isDark, reducedMotion, maxWidth, isMobile, ac
       aria-label={card.title}
       onClick={handleClick}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }}
-      whileHover={isMobile ? undefined : hoverProps}
-      animate={carouselAnimate}
-      transition={isMobile ? { type: 'spring', stiffness: 280, damping: 30 } : { type: 'spring', stiffness: 300, damping: 25 }}
+      whileHover={!isMobile && isActive ? hoverProps : undefined}
+      animate={animate}
+      transition={{ type: 'spring', stiffness: isMobile ? 280 : 300, damping: isMobile ? 30 : 25 }}
       style={{
-        ...(isMobile
-          ? {
-              position: 'absolute',
-              left: '50%',
-              top: '50%',
-              marginLeft: -cardW / 2,
-              marginTop: -cardH / 2,
-              width: cardW,
-              height: cardH,
-            }
-          : {
-              width: '100%',
-              maxWidth,
-              height: 520,
-              position: 'relative',
-            }
-        ),
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        marginLeft: -cardW / 2,
+        marginTop: -cardH / 2,
+        width: cardW,
+        height: cardH,
         borderRadius: 20,
         overflow: 'hidden',
         cursor: 'pointer',
         background: cardBg,
-        boxShadow: isMobile
-          ? (isActive ? '0 20px 60px rgba(0,0,0,0.42)' : '0 12px 40px rgba(0,0,0,0.25)')
-          : '0 20px 60px rgba(0,0,0,0.25)',
+        boxShadow: isActive ? '0 20px 60px rgba(0,0,0,0.42)' : '0 12px 40px rgba(0,0,0,0.25)',
         transformStyle: 'preserve-3d',
       }}
     >
@@ -441,59 +441,18 @@ export default function BengalCards() {
   const atStart = activeIndex === 0;
   const atEnd = activeIndex === BENGAL_CARDS.length - 1;
 
-  // ── Desktop / tablet: two cards side by side (unchanged) ──
-  if (!isMobile) {
-    return (
-      <div style={{ perspective: '1000px' }}>
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '2rem',
-          justifyContent: 'center',
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
-          {BENGAL_CARDS.map((card, index) => (
-            <BengalCard
-              key={card.id}
-              card={card}
-              index={index}
-              isDark={isDark}
-              reducedMotion={reducedMotion}
-              maxWidth={cardW}
-              isMobile={false}
-              onOpen={() => setSelected(card)}
-            />
-          ))}
-        </div>
-
-        <AnimatePresence>
-          {selected && (
-            <BengalModal
-              key={selected.id}
-              card={selected}
-              isDark={isDark}
-              onClose={() => setSelected(null)}
-            />
-          )}
-        </AnimatePresence>
-      </div>
-    );
-  }
-
-  // ── Mobile: carousel — one active card, next card peeks ──
   return (
     <div style={{ position: 'relative' }}>
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         style={{
-          perspective: '1000px',
+          perspective: isMobile ? '1000px' : '1200px',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           position: 'relative',
-          height: cardH + 80,
+          height: cardH + (isMobile ? 80 : 120),
           overflow: 'hidden',
         }}
       >
@@ -504,7 +463,7 @@ export default function BengalCards() {
             index={index}
             isDark={isDark}
             reducedMotion={reducedMotion}
-            isMobile={true}
+            isMobile={isMobile}
             activeIndex={activeIndex}
             onSelect={() => setActiveIndex(index)}
             cardW={cardW}
