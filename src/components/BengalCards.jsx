@@ -72,7 +72,7 @@ const BENGAL_CARDS = [
 ];
 
 // ── Single 3D card ───────────────────────────────────────────
-function BengalCard({ card, index, isDark, reducedMotion, maxWidth, onOpen }) {
+function BengalCard({ card, index, isDark, reducedMotion, maxWidth, isMobile, onOpen }) {
   const [imgError, setImgError] = useState(false);
 
   const cardBg = isDark ? '#1a1a1a' : '#ffffff';
@@ -96,7 +96,8 @@ function BengalCard({ card, index, isDark, reducedMotion, maxWidth, onOpen }) {
       style={{
         width: '100%',
         maxWidth,
-        height: 520,
+        flex: isMobile ? '1 1 0' : undefined,
+        height: isMobile ? 340 : 520,
         borderRadius: 20,
         overflow: 'hidden',
         cursor: 'pointer',
@@ -106,8 +107,8 @@ function BengalCard({ card, index, isDark, reducedMotion, maxWidth, onOpen }) {
         position: 'relative',
       }}
     >
-      {/* Image area (top 65%) */}
-      <div style={{ position: 'relative', height: '65%', width: '100%' }}>
+      {/* Image area (top portion) */}
+      <div style={{ position: 'relative', height: isMobile ? '55%' : '65%', width: '100%' }}>
         {/* crimson gradient fallback (shown when image fails) */}
         <div style={{
           position: 'absolute',
@@ -140,18 +141,18 @@ function BengalCard({ card, index, isDark, reducedMotion, maxWidth, onOpen }) {
         }} />
       </div>
 
-      {/* Content area (bottom 35%) */}
+      {/* Content area (bottom portion) */}
       <div style={{
-        padding: '1rem 1.25rem',
-        height: '35%',
+        padding: isMobile ? '0.75rem 0.85rem' : '1rem 1.25rem',
+        height: isMobile ? '45%' : '35%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        gap: '0.35rem',
+        gap: isMobile ? '0.25rem' : '0.35rem',
       }}>
         <h3 style={{
           fontFamily: 'var(--font-serif)',
-          fontSize: '1.5rem',
+          fontSize: isMobile ? '1.15rem' : '1.5rem',
           fontWeight: 700,
           color: titleColor,
           margin: 0,
@@ -191,13 +192,13 @@ function BengalCard({ card, index, isDark, reducedMotion, maxWidth, onOpen }) {
             color: 'white',
             fontFamily: 'var(--font-sans)',
             fontWeight: 700,
-            fontSize: '0.78rem',
+            fontSize: isMobile ? '0.68rem' : '0.78rem',
             letterSpacing: '0.06em',
             textTransform: 'uppercase',
             textDecoration: 'none',
-            padding: '0.55rem 1.1rem',
+            padding: isMobile ? '0.4rem 0.8rem' : '0.55rem 1.1rem',
             borderRadius: 10,
-            minHeight: 44,
+            minHeight: isMobile ? 38 : 44,
             alignSelf: 'flex-start',
           }}
           onMouseOver={(e) => e.currentTarget.style.background = '#1da851'}
@@ -367,16 +368,16 @@ export default function BengalCards() {
   const isDark = useDarkMode();
   const reducedMotion = usePrefersReducedMotion();
   const isMobile = useIsMobile();
-  const maxWidth = isMobile ? 380 : 420;
+  const maxWidth = isMobile ? 200 : 420;
 
   return (
     <div style={{ perspective: '1000px' }}>
       <div style={{
         display: 'flex',
         flexWrap: 'wrap',
-        gap: '2rem',
+        gap: isMobile ? '0.75rem' : '2rem',
         justifyContent: 'center',
-        flexDirection: isMobile ? 'column' : 'row',
+        flexDirection: 'row',
         alignItems: 'center',
       }}>
         {BENGAL_CARDS.map((card, index) => (
@@ -387,6 +388,7 @@ export default function BengalCards() {
             isDark={isDark}
             reducedMotion={reducedMotion}
             maxWidth={maxWidth}
+            isMobile={isMobile}
             onOpen={() => setSelected(card)}
           />
         ))}
