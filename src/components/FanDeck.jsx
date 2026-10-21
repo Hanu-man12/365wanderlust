@@ -288,7 +288,7 @@ function InfoPanel({ dest, isDark, onClose }) {
             {dest.tagline}
           </p>
           <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-            {dest.id !== 'bengal' && (
+            {dest.id !== 'bengal' && dest.id !== 'rajasthan' && (
               <a
                 href={getWhatsAppLink(waMsg)}
                 target="_blank"
