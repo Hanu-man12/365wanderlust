@@ -545,6 +545,27 @@ export default function RajasthanCards() {
         >›</button>
       </div>
 
+      {/* Pagination dots */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '0.75rem' }}>
+        {RAJASTHAN_CARDS.map((card, i) => (
+          <button
+            key={card.id}
+            onClick={() => setActiveIndex(i)}
+            aria-label={`Go to ${card.title}`}
+            style={{
+              width: i === activeIndex ? 20 : 8,
+              height: 8,
+              borderRadius: 4,
+              border: 'none',
+              background: i === activeIndex ? '#D0112B' : 'rgba(208,17,43,0.3)',
+              cursor: 'pointer',
+              padding: 0,
+              transition: 'width 0.3s, background 0.3s',
+            }}
+          />
+        ))}
+      </div>
+
       {/* Modal — rendered OUTSIDE the perspective container so the fixed
           overlay is anchored to the viewport (perspective would otherwise
           establish a containing block and overflow:hidden would clip it) */}
