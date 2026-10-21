@@ -5,7 +5,7 @@
 // ============================================================
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { getWhatsAppLink } from '../utils/contactLinks';
+import { prefillDestination } from '../utils/prefillDestination';
 
 // ── Dark mode hook (same pattern as About.jsx / FanDeck.jsx) ──
 function useDarkMode() {
@@ -210,10 +210,8 @@ function BengalCard({ card, index, isDark, reducedMotion, isMobile, activeIndex,
         }}>{card.description}</p>
         {/* stopPropagation so opening WhatsApp does NOT also open the modal */}
         <a
-          href={getWhatsAppLink(card.whatsappMessage)}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
+          href="#contact"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); prefillDestination('India', 'Bengal', card.title); }}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -360,9 +358,8 @@ function BengalModal({ card, isDark, onClose }) {
             lineHeight: 1.6,
           }}>{card.description}</p>
           <a
-            href={getWhatsAppLink(card.whatsappMessage)}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contact"
+            onClick={(e) => { e.preventDefault(); onClose(); prefillDestination('India', 'Bengal', card.title); }}
             style={{
               display: 'inline-flex',
               alignItems: 'center',

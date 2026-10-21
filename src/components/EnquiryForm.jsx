@@ -3,7 +3,7 @@
 //  On submit: validates fields, composes WhatsApp message,
 //  opens wa.me link. No SMTP, no secrets, no backend needed.
 // ============================================================
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Send, CheckCircle } from 'lucide-react';
 import { getWhatsAppLink } from '../utils/contactLinks';
 
@@ -103,6 +103,21 @@ export default function EnquiryForm() {
       return n;
     });
   };
+
+  // Listen for prefill events from destination card "Plan My Trip" buttons.
+  // Sets all three cascading fields at once so the dependent dropdowns
+  // reveal correctly without intermediate empty states.
+  useEffect(() => {
+    const handler = (e) => {
+      const { country, region, destination } = e.detail;
+      if (DESTINATIONS_BY_REGION[region]?.includes(destination)) {
+        setForm(f => ({ ...f, country, region, destination }));
+        setErrors({});
+      }
+    };
+    window.addEventListener('prefillDestination', handler);
+    return () => window.removeEventListener('prefillDestination', handler);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
