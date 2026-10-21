@@ -3,7 +3,7 @@
 //  Two premium cards with a click-to-open modal popup.
 //  Uses motion from 'motion/react'.
 // ============================================================
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getWhatsAppLink } from '../utils/contactLinks';
 
@@ -72,7 +72,7 @@ const BENGAL_CARDS = [
 ];
 
 // ── Single 3D card ───────────────────────────────────────────
-function BengalCard({ card, index, isDark, reducedMotion, maxWidth, isMobile, onOpen }) {
+function BengalCard({ card, index, isDark, reducedMotion, maxWidth, isMobile, activeIndex, onSelect, cardW, cardH, onOpen }) {
   const [imgError, setImgError] = useState(false);
 
   const cardBg = isDark ? '#1a1a1a' : '#ffffff';
@@ -84,27 +84,57 @@ function BengalCard({ card, index, isDark, reducedMotion, maxWidth, isMobile, on
     ? { y: -6, boxShadow: '0 30px 80px rgba(0,0,0,0.4)' }
     : { rotateY: index === 0 ? -3 : 3, y: -6, boxShadow: '0 30px 80px rgba(0,0,0,0.4)' };
 
+  // ── Carousel mode (mobile): one active card, neighbors peek ──
+  const offset = isMobile ? index - activeIndex : 0;
+  const isActive = offset === 0;
+
+  let carouselAnimate = isMobile
+    ? (offset === 0
+        ? { x: 0, rotateY: 0, scale: 1, opacity: 1, zIndex: 3 }
+        : { x: offset > 0 ? '55%' : '-55%', rotateY: offset > 0 ? -12 : 12, scale: 0.85, opacity: 0.5, zIndex: 1 })
+    : undefined;
+  if (reducedMotion && isMobile && carouselAnimate) {
+    carouselAnimate = { ...carouselAnimate, rotateY: 0 };
+  }
+
+  const handleClick = isMobile ? () => { if (isActive) onOpen(); else onSelect(); } : onOpen;
+
   return (
     <motion.div
       role="button"
       tabIndex={0}
       aria-label={card.title}
-      onClick={onOpen}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(); } }}
-      whileHover={hoverProps}
-      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+      onClick={handleClick}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }}
+      whileHover={isMobile ? undefined : hoverProps}
+      animate={carouselAnimate}
+      transition={isMobile ? { type: 'spring', stiffness: 280, damping: 30 } : { type: 'spring', stiffness: 300, damping: 25 }}
       style={{
-        width: '100%',
-        maxWidth,
-        flex: isMobile ? '1 1 0' : undefined,
-        height: isMobile ? 340 : 520,
+        ...(isMobile
+          ? {
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              marginLeft: -cardW / 2,
+              marginTop: -cardH / 2,
+              width: cardW,
+              height: cardH,
+            }
+          : {
+              width: '100%',
+              maxWidth,
+              height: 520,
+              position: 'relative',
+            }
+        ),
         borderRadius: 20,
         overflow: 'hidden',
         cursor: 'pointer',
         background: cardBg,
-        boxShadow: '0 20px 60px rgba(0,0,0,0.25)',
+        boxShadow: isMobile
+          ? (isActive ? '0 20px 60px rgba(0,0,0,0.42)' : '0 12px 40px rgba(0,0,0,0.25)')
+          : '0 20px 60px rgba(0,0,0,0.25)',
         transformStyle: 'preserve-3d',
-        position: 'relative',
       }}
     >
       {/* Image area (top portion) */}
@@ -362,24 +392,111 @@ function BengalModal({ card, isDark, onClose }) {
   );
 }
 
+// ── Shared arrow button style ────────────────────────────────
+const arrowBtnStyle = {
+  position: 'absolute',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  width: 44,
+  height: 44,
+  borderRadius: '50%',
+  border: 'none',
+  background: '#D0112B',
+  color: '#fff',
+  zIndex: 10,
+  fontSize: '1.4rem',
+  lineHeight: 1,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
 // ── Main component ──────────────────────────────────────────
 export default function BengalCards() {
   const [selected, setSelected] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const isDark = useDarkMode();
   const reducedMotion = usePrefersReducedMotion();
   const isMobile = useIsMobile();
-  const maxWidth = isMobile ? 200 : 420;
 
+  const cardW = isMobile ? Math.min(window.innerWidth - 60, 300) : 420;
+  const cardH = isMobile ? 440 : 520;
+
+  const touchStartX = useRef(null);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (dx >= 50) {
+      setActiveIndex((i) => Math.max(0, i - 1));
+    } else if (dx <= -50) {
+      setActiveIndex((i) => Math.min(BENGAL_CARDS.length - 1, i + 1));
+    }
+    touchStartX.current = null;
+  };
+
+  const atStart = activeIndex === 0;
+  const atEnd = activeIndex === BENGAL_CARDS.length - 1;
+
+  // ── Desktop / tablet: two cards side by side (unchanged) ──
+  if (!isMobile) {
+    return (
+      <div style={{ perspective: '1000px' }}>
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '2rem',
+          justifyContent: 'center',
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
+          {BENGAL_CARDS.map((card, index) => (
+            <BengalCard
+              key={card.id}
+              card={card}
+              index={index}
+              isDark={isDark}
+              reducedMotion={reducedMotion}
+              maxWidth={cardW}
+              isMobile={false}
+              onOpen={() => setSelected(card)}
+            />
+          ))}
+        </div>
+
+        <AnimatePresence>
+          {selected && (
+            <BengalModal
+              key={selected.id}
+              card={selected}
+              isDark={isDark}
+              onClose={() => setSelected(null)}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
+
+  // ── Mobile: carousel — one active card, next card peeks ──
   return (
-    <div style={{ perspective: '1000px' }}>
-      <div style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: isMobile ? '0.75rem' : '2rem',
-        justifyContent: 'center',
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
+    <div style={{ position: 'relative' }}>
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          perspective: '1000px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          position: 'relative',
+          height: cardH + 80,
+          overflow: 'hidden',
+        }}
+      >
         {BENGAL_CARDS.map((card, index) => (
           <BengalCard
             key={card.id}
@@ -387,9 +504,49 @@ export default function BengalCards() {
             index={index}
             isDark={isDark}
             reducedMotion={reducedMotion}
-            maxWidth={maxWidth}
-            isMobile={isMobile}
+            isMobile={true}
+            activeIndex={activeIndex}
+            onSelect={() => setActiveIndex(index)}
+            cardW={cardW}
+            cardH={cardH}
             onOpen={() => setSelected(card)}
+          />
+        ))}
+
+        {/* Left navigation arrow */}
+        <button
+          onClick={() => setActiveIndex((i) => Math.max(0, i - 1))}
+          disabled={atStart}
+          aria-label="Previous card"
+          style={{ ...arrowBtnStyle, left: 0, opacity: atStart ? 0.3 : 1, cursor: atStart ? 'default' : 'pointer' }}
+        >‹</button>
+
+        {/* Right navigation arrow */}
+        <button
+          onClick={() => setActiveIndex((i) => Math.min(BENGAL_CARDS.length - 1, i + 1))}
+          disabled={atEnd}
+          aria-label="Next card"
+          style={{ ...arrowBtnStyle, right: 0, opacity: atEnd ? 0.3 : 1, cursor: atEnd ? 'default' : 'pointer' }}
+        >›</button>
+      </div>
+
+      {/* Pagination dots */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '0.75rem' }}>
+        {BENGAL_CARDS.map((card, i) => (
+          <button
+            key={card.id}
+            onClick={() => setActiveIndex(i)}
+            aria-label={`Go to ${card.title}`}
+            style={{
+              width: i === activeIndex ? 20 : 8,
+              height: 8,
+              borderRadius: 4,
+              border: 'none',
+              background: i === activeIndex ? '#D0112B' : 'rgba(208,17,43,0.3)',
+              cursor: 'pointer',
+              padding: 0,
+              transition: 'width 0.3s, background 0.3s',
+            }}
           />
         ))}
       </div>
