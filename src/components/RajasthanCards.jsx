@@ -201,6 +201,10 @@ function RajasthanCard({ card, index, activeIndex, isDark, reducedMotion, cardW,
           color: mutedColor,
           margin: 0,
           lineHeight: 1.6,
+          display: '-webkit-box',
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
         }}>{card.description}</p>
         {/* stopPropagation so opening WhatsApp does NOT also open the modal */}
         <a
