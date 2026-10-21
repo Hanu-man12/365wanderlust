@@ -39,18 +39,18 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
-// ── Mobile hook (≤640px) ─────────────────────────────────────
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return window.innerWidth <= 640;
+// ── Window width hook (reactive — drives both mobile check and card sizing) ──
+function useWindowWidth() {
+  const [width, setWidth] = useState(() => {
+    if (typeof window === 'undefined') return 1024;
+    return window.innerWidth;
   });
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth <= 640);
+    const onResize = () => setWidth(window.innerWidth);
     window.addEventListener('resize', onResize, { passive: true });
     return () => window.removeEventListener('resize', onResize);
   }, []);
-  return isMobile;
+  return width;
 }
 
 // ── Card data ────────────────────────────────────────────────
@@ -65,7 +65,7 @@ const RAJASTHAN_CARDS = [
   },
   {
     id: 'alwar',
-    image: '/destinations/alwar.png',
+    image: '/destinations/alwar.webp',
     title: 'Alwar + Sariska',
     subtitle: 'Rajasthan',
     description: 'Aravalli hills, Siliserh Lake, forest safari and heritage architecture.',
@@ -133,7 +133,7 @@ function RajasthanCard({ card, index, activeIndex, isDark, reducedMotion, cardW,
         transformOrigin: 'center center',
         cursor: 'pointer',
         boxShadow: isActive
-          ? '0 24px 80px rgba(0,0,0,0.45)'
+          ? '0 20px 60px rgba(0,0,0,0.42)'
           : '0 12px 40px rgba(0,0,0,0.25)',
       }}
     >
@@ -242,9 +242,42 @@ function RajasthanCard({ card, index, activeIndex, isDark, reducedMotion, cardW,
 // ── Modal popup ──────────────────────────────────────────────
 function RajasthanModal({ card, isDark, onClose }) {
   const [imgError, setImgError] = useState(false);
+  const closeBtnRef = useRef(null);
+  const modalRef = useRef(null);
 
   const cardBg = isDark ? '#1a1a1a' : '#ffffff';
   const descColor = isDark ? '#a0a0a0' : '#666';
+
+  // Keyboard: Escape closes, Tab trapped within modal.
+  // Focus: move to close button on open, restore previous focus on close.
+  useEffect(() => {
+    const previouslyFocused = document.activeElement;
+    closeBtnRef.current?.focus();
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const focusables = modalRef.current?.querySelectorAll('button, a[href]');
+      if (!focusables || focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      previouslyFocused?.focus?.();
+    };
+  }, [onClose]);
 
   return (
     <motion.div
@@ -270,6 +303,10 @@ function RajasthanModal({ card, isDark, onClose }) {
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.25 }}
         onClick={(e) => e.stopPropagation()}
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`${card.title} details`}
         style={{
           width: '100%',
           maxWidth: 480,
@@ -282,6 +319,7 @@ function RajasthanModal({ card, isDark, onClose }) {
       >
         {/* Close button */}
         <button
+          ref={closeBtnRef}
           onClick={onClose}
           aria-label="Close"
           style={{
@@ -396,9 +434,10 @@ export default function RajasthanCards() {
   const [selected, setSelected] = useState(null);
   const isDark = useDarkMode();
   const reducedMotion = usePrefersReducedMotion();
-  const isMobile = useIsMobile();
+  const windowWidth = useWindowWidth();
+  const isMobile = windowWidth <= 640;
 
-  const CARD_W = isMobile ? Math.min(window.innerWidth - 40, 340) : 400;
+  const CARD_W = isMobile ? Math.min(windowWidth - 40, 340) : 400;
   const CARD_H = isMobile ? 480 : 520;
 
   const touchStartX = useRef(null);
@@ -432,7 +471,7 @@ export default function RajasthanCards() {
           justifyContent: 'center',
           alignItems: 'center',
           position: 'relative',
-          height: CARD_H + 80,
+          height: CARD_H + 120,
           overflow: 'hidden',
         }}
       >
